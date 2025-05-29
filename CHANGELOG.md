@@ -1,5 +1,15 @@
 # Roo Code Changelog
 
+## 4.0.0
+
+### Major Changes
+
+- Default enabled autoCondenseContext and moved settings out of Experimental
+
+### Patch Changes
+
+- Skips condense operations if the context size grows & shows an error
+
 ## [3.18.5] - 2025-05-27
 
 - Add thinking controls for Requesty (thanks @dtrugman!)
