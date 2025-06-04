@@ -36,7 +36,7 @@ import { t } from "../../i18n"
 import { ClineApiReqCancelReason, ClineApiReqInfo } from "../../shared/ExtensionMessage"
 import { getApiMetrics } from "../../shared/getApiMetrics"
 import { ClineAskResponse } from "../../shared/WebviewMessage"
-import { defaultModeSlug } from "../../shared/modes"
+import { defaultModeSlug, type Mode } from "../../shared/modes"
 import { DiffStrategy } from "../../shared/tools"
 
 // services
@@ -1696,7 +1696,7 @@ export class Task extends EventEmitter<ClineEvents> {
 					: undefined
 			const codeIndexManager = provider ? CodeIndexManager.getInstance(provider.context) : undefined
 			tools = buildToolSchemas(
-				mode,
+				(mode ?? defaultModeSlug) as Mode,
 				this.cwd,
 				(this.api.getModel().info.supportsComputerUse ?? false) && (browserToolEnabled ?? true),
 				codeIndexManager,
