@@ -1509,6 +1509,7 @@ export class Task extends EventEmitter<ClineEvents> {
 		const state = await this.providerRef.deref()?.getState()
 
 		const {
+			apiConfiguration,
 			browserViewportSize,
 			mode,
 			customModes,
@@ -1521,6 +1522,10 @@ export class Task extends EventEmitter<ClineEvents> {
 			maxConcurrentFileReads,
 			maxReadFileLine,
 		} = state ?? {}
+
+		const useNativeToolCalling = ["openai", "openai-native", "anthropic"].includes(
+			apiConfiguration?.apiProvider || "",
+		)
 
 		return await (async () => {
 			const provider = this.providerRef.deref()
@@ -1549,6 +1554,7 @@ export class Task extends EventEmitter<ClineEvents> {
 				{
 					maxConcurrentFileReads,
 				},
+				useNativeToolCalling,
 			)
 		})()
 	}
