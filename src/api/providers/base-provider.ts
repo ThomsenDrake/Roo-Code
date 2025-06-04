@@ -14,6 +14,7 @@ export abstract class BaseProvider implements ApiHandler {
 		systemPrompt: string,
 		messages: Anthropic.Messages.MessageParam[],
 		metadata?: ApiHandlerCreateMessageMetadata,
+		functions?: any[],
 	): ApiStream
 
 	abstract getModel(): { id: string; info: ModelInfo }

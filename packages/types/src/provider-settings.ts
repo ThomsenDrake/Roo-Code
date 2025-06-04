@@ -59,6 +59,9 @@ const baseProviderSettingsSchema = z.object({
 	modelTemperature: z.number().nullish(),
 	rateLimitSeconds: z.number().optional(),
 
+	// Enable native tool calling for providers that support it
+	useNativeToolCalls: z.boolean().optional(),
+
 	// Model reasoning.
 	enableReasoningEffort: z.boolean().optional(),
 	reasoningEffort: reasoningEffortsSchema.optional(),
@@ -347,6 +350,7 @@ export const PROVIDER_SETTINGS_KEYS = keysOf<ProviderSettings>()([
 	"fuzzyMatchThreshold",
 	"modelTemperature",
 	"rateLimitSeconds",
+	"useNativeToolCalls",
 	// Fake AI
 	"fakeAi",
 	// X.AI (Grok)

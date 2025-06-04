@@ -39,6 +39,7 @@ export class AnthropicHandler extends BaseProvider implements SingleCompletionHa
 		systemPrompt: string,
 		messages: Anthropic.Messages.MessageParam[],
 		metadata?: ApiHandlerCreateMessageMetadata,
+		functions?: any[],
 	): ApiStream {
 		let stream: AnthropicStream<Anthropic.Messages.RawMessageStreamEvent>
 		const cacheControl: CacheControlEphemeral = { type: "ephemeral" }
@@ -95,6 +96,9 @@ export class AnthropicHandler extends BaseProvider implements SingleCompletionHa
 							return message
 						}),
 						stream: true,
+						...(this.options.useNativeToolCalls && functions && functions.length > 0
+							? { tools: functions, tool_choice: { type: "auto" } }
+							: {}),
 					},
 					(() => {
 						// prompt caching: https://x.com/alexalbert__/status/1823751995901272068
@@ -127,6 +131,9 @@ export class AnthropicHandler extends BaseProvider implements SingleCompletionHa
 					system: [{ text: systemPrompt, type: "text" }],
 					messages,
 					stream: true,
+					...(this.options.useNativeToolCalls && functions && functions.length > 0
+						? { tools: functions, tool_choice: { type: "auto" } }
+						: {}),
 				})) as any
 				break
 			}
@@ -181,6 +188,14 @@ export class AnthropicHandler extends BaseProvider implements SingleCompletionHa
 
 							yield { type: "text", text: chunk.content_block.text }
 							break
+						case "tool_use":
+							yield {
+								type: "tool_use",
+								name: (chunk.content_block as any).name ?? "",
+								params: (chunk.content_block as any).input ?? {},
+								partial: false,
+							}
+							break
 					}
 					break
 				case "content_block_delta":
@@ -190,6 +205,14 @@ export class AnthropicHandler extends BaseProvider implements SingleCompletionHa
 							break
 						case "text_delta":
 							yield { type: "text", text: chunk.delta.text }
+							break
+						case "tool_use_delta":
+							yield {
+								type: "tool_use",
+								name: (chunk.delta as any).name ?? "",
+								params: (chunk.delta as any).input ?? {},
+								partial: true,
+							}
 							break
 					}
 
