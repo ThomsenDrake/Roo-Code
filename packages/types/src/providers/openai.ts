@@ -14,6 +14,7 @@ export const openAiNativeModels = {
 		inputPrice: 2,
 		outputPrice: 8,
 		cacheReadsPrice: 0.5,
+		supportsNativeToolCalling: true,
 	},
 	"gpt-4.1-mini": {
 		maxTokens: 32_768,
@@ -23,6 +24,7 @@ export const openAiNativeModels = {
 		inputPrice: 0.4,
 		outputPrice: 1.6,
 		cacheReadsPrice: 0.1,
+		supportsNativeToolCalling: true,
 	},
 	"gpt-4.1-nano": {
 		maxTokens: 32_768,
@@ -32,6 +34,7 @@ export const openAiNativeModels = {
 		inputPrice: 0.1,
 		outputPrice: 0.4,
 		cacheReadsPrice: 0.025,
+		supportsNativeToolCalling: true,
 	},
 	o3: {
 		maxTokens: 100_000,
@@ -161,6 +164,7 @@ export const openAiNativeModels = {
 		inputPrice: 75,
 		outputPrice: 150,
 		cacheReadsPrice: 37.5,
+		supportsNativeToolCalling: true,
 	},
 	"gpt-4o": {
 		maxTokens: 16_384,
@@ -170,6 +174,7 @@ export const openAiNativeModels = {
 		inputPrice: 2.5,
 		outputPrice: 10,
 		cacheReadsPrice: 1.25,
+		supportsNativeToolCalling: true,
 	},
 	"gpt-4o-mini": {
 		maxTokens: 16_384,
@@ -179,6 +184,7 @@ export const openAiNativeModels = {
 		inputPrice: 0.15,
 		outputPrice: 0.6,
 		cacheReadsPrice: 0.075,
+		supportsNativeToolCalling: true,
 	},
 } as const satisfies Record<string, ModelInfo>
 

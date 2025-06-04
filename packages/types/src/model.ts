@@ -44,6 +44,7 @@ export const modelInfoSchema = z.object({
 	cacheReadsPrice: z.number().optional(),
 	description: z.string().optional(),
 	reasoningEffort: reasoningEffortsSchema.optional(),
+	supportsNativeToolCalling: z.boolean().optional(),
 	minTokensPerCachePoint: z.number().optional(),
 	maxCachePoints: z.number().optional(),
 	cachableFields: z.array(z.string()).optional(),
