@@ -7,7 +7,9 @@ You have access to a set of tools that are executed upon the user's approval. Yo
 
 # Tool Use Formatting
 
-Tool uses are formatted using XML-style tags. The tool name itself becomes the XML tag name. Each parameter is enclosed within its own set of tags. Here's the structure:
+When the underlying model supports function calling, Roo Code automatically formats tool uses as JSON function calls. If function calling isn't available, it falls back to XML-style tags instead. You can force the XML format via the \`roo-cline.toolUseFormat\` setting.
+
+Tool uses formatted as XML look like this:
 
 <actual_tool_name>
 <parameter1_name>value1</parameter1_name>

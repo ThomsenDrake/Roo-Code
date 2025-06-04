@@ -97,6 +97,8 @@ Roo Code comes with powerful [tools](https://docs.roocode.com/basic-usage/how-to
 
 MCP extends Roo Code's capabilities by allowing you to add unlimited custom tools. Integrate with external APIs, connect to databases, or create specialized development tools - MCP provides the framework to expand Roo Code's functionality to meet your specific needs.
 
+Roo Code automatically uses JSON function calls for tool execution when the underlying model supports them, falling back to XML tags otherwise. You can force the XML format by setting `roo-cline.toolUseFormat` to `xml`. See [issue #4047](https://github.com/RooCodeInc/Roo-Code/issues/4047) for background.
+
 ### Customization
 
 Make Roo Code work your way with:

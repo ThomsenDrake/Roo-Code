@@ -184,7 +184,9 @@ const formatImagesIntoBlocks = (images?: string[]): Anthropic.ImageBlockParam[] 
 
 const toolUseInstructionsReminder = `# Reminder: Instructions for Tool Use
 
-Tool uses are formatted using XML-style tags. The tool name itself becomes the XML tag name. Each parameter is enclosed within its own set of tags. Here's the structure:
+When supported by the model, Roo Code formats tool calls as JSON function calls. If function calling isn't available, it falls back to XML-style tags. You can force XML tags via the \`roo-cline.toolUseFormat\` setting.
+
+XML formatted tool use looks like this:
 
 <actual_tool_name>
 <parameter1_name>value1</parameter1_name>
