@@ -162,7 +162,8 @@ export class VsCodeLmHandler extends BaseProvider implements SingleCompletionHan
 	 * @remarks
 	 * This method handles the initialization of the VS Code LM client if not already created,
 	 * converts the messages to VS Code LM format, and streams the response chunks.
-	 * Tool calls handling is currently a work in progress.
+	 * When `useNativeToolCalls` is true, tool calls are yielded as `tool_use`
+	 * objects. Otherwise they are converted into text for legacy compatibility.
 	 */
 	dispose(): void {
 		if (this.disposable) {
@@ -406,13 +407,11 @@ export class VsCodeLmHandler extends BaseProvider implements SingleCompletionHan
 							continue
 						}
 
-						// Ensure input is a valid object
 						if (!chunk.input || typeof chunk.input !== "object") {
 							console.warn("Roo Code <Language Model API>: Invalid tool input received:", chunk.input)
 							continue
 						}
 
-						// Convert tool calls to text format with proper error handling
 						const toolCall = {
 							type: "tool_call",
 							name: chunk.name,
@@ -423,20 +422,27 @@ export class VsCodeLmHandler extends BaseProvider implements SingleCompletionHan
 						const toolCallText = JSON.stringify(toolCall)
 						accumulatedText += toolCallText
 
-						// Log tool call for debugging
 						console.debug("Roo Code <Language Model API>: Processing tool call:", {
 							name: chunk.name,
 							callId: chunk.callId,
 							inputSize: JSON.stringify(chunk.input).length,
 						})
 
-						yield {
-							type: "text",
-							text: toolCallText,
+						if (this.options.useNativeToolCalls) {
+							yield {
+								type: "tool_use",
+								name: chunk.name,
+								params: chunk.input,
+								partial: false,
+							}
+						} else {
+							yield {
+								type: "text",
+								text: toolCallText,
+							}
 						}
 					} catch (error) {
 						console.error("Roo Code <Language Model API>: Failed to process tool call:", error)
-						// Continue processing other chunks even if one fails
 						continue
 					}
 				} else {
