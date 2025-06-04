@@ -31,6 +31,7 @@ jest.mock("fs/promises", () => ({
 
 jest.mock("os", () => ({
 	homedir: jest.fn(() => "/mock/home"),
+	cpus: jest.fn(() => [1]),
 }))
 
 describe("importExport", () => {

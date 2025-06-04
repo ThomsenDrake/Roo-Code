@@ -2,6 +2,7 @@ import React, { memo, useCallback, useEffect, useMemo, useState } from "react"
 import { convertHeadersToObject } from "./utils/headers"
 import { useDebounce } from "react-use"
 import { VSCodeLink } from "@vscode/webview-ui-toolkit/react"
+import { Checkbox } from "vscrui"
 
 import {
 	type ProviderName,
@@ -488,6 +489,13 @@ const ApiOptions = ({
 						value={apiConfiguration.rateLimitSeconds || 0}
 						onChange={(value) => setApiConfigurationField("rateLimitSeconds", value)}
 					/>
+					<Checkbox
+						checked={apiConfiguration.useNativeToolCalls ?? false}
+						onChange={(checked: boolean) =>
+							setApiConfigurationField("useNativeToolCalls", checked === true)
+						}>
+						{t("settings:modelInfo.useNativeToolCalls")}
+					</Checkbox>
 				</>
 			)}
 		</div>

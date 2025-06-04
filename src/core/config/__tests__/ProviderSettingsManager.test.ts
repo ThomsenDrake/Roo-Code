@@ -236,7 +236,7 @@ describe("ProviderSettingsManager", () => {
 			const expectedConfig = {
 				currentApiConfigName: "default",
 				apiConfigs: {
-					default: {},
+					default: { useNativeToolCalls: false },
 					test: {
 						...newConfig,
 						id: testConfigId,
@@ -286,7 +286,7 @@ describe("ProviderSettingsManager", () => {
 			const expectedConfig = {
 				currentApiConfigName: "default",
 				apiConfigs: {
-					default: {},
+					default: { useNativeToolCalls: false },
 					test: {
 						...newConfig,
 						id: testConfigId,
@@ -443,7 +443,12 @@ describe("ProviderSettingsManager", () => {
 			const { name, ...providerSettings } = await providerSettingsManager.activateProfile({ name: "test" })
 
 			expect(name).toBe("test")
-			expect(providerSettings).toEqual({ apiProvider: "anthropic", apiKey: "test-key", id: "test-id" })
+			expect(providerSettings).toEqual({
+				apiProvider: "anthropic",
+				apiKey: "test-key",
+				id: "test-id",
+				useNativeToolCalls: false,
+			})
 
 			// Get the stored config to check the structure.
 			const storedConfig = JSON.parse(mockSecrets.store.mock.calls[1][1])
@@ -453,6 +458,7 @@ describe("ProviderSettingsManager", () => {
 				apiProvider: "anthropic",
 				apiKey: "test-key",
 				id: "test-id",
+				useNativeToolCalls: false,
 			})
 		})
 
