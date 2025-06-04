@@ -8,6 +8,7 @@ import { MultiSearchReplaceDiffStrategy } from "../diff/strategies/multi-search-
 import { ClineProvider } from "./ClineProvider"
 
 export const generateSystemPrompt = async (provider: ClineProvider, message: WebviewMessage) => {
+	const state = await provider.getState()
 	const {
 		apiConfiguration,
 		customModePrompts,
@@ -22,7 +23,7 @@ export const generateSystemPrompt = async (provider: ClineProvider, message: Web
 		language,
 		maxReadFileLine,
 		maxConcurrentFileReads,
-	} = await provider.getState()
+	} = state
 
 	const diffStrategy = new MultiSearchReplaceDiffStrategy(fuzzyMatchThreshold)
 
@@ -53,7 +54,8 @@ export const generateSystemPrompt = async (provider: ClineProvider, message: Web
 	// and browser tools are enabled in settings
 	const canUseBrowserTool = modelSupportsComputerUse && modeSupportsBrowser && (browserToolEnabled ?? true)
 
-	const useNativeToolCalling = ["openai", "openai-native", "anthropic"].includes(apiConfiguration.apiProvider || "")
+	const providerSupportsNative = ["openai", "openai-native", "anthropic"].includes(apiConfiguration.apiProvider || "")
+	const useNativeToolCalling = providerSupportsNative || (state?.useNativeToolCalls ?? false)
 
 	const systemPrompt = await SYSTEM_PROMPT(
 		provider.context,
