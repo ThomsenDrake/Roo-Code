@@ -76,6 +76,7 @@ export class OpenAiHandler extends BaseProvider implements SingleCompletionHandl
 		systemPrompt: string,
 		messages: Anthropic.Messages.MessageParam[],
 		metadata?: ApiHandlerCreateMessageMetadata,
+		functions?: any[],
 	): ApiStream {
 		const { info: modelInfo, reasoning } = this.getModel()
 		const modelUrl = this.options.openAiBaseUrl ?? ""
@@ -87,7 +88,7 @@ export class OpenAiHandler extends BaseProvider implements SingleCompletionHandl
 		const ark = modelUrl.includes(".volces.com")
 
 		if (modelId.startsWith("o3-mini")) {
-			yield* this.handleO3FamilyMessage(modelId, systemPrompt, messages)
+			yield* this.handleO3FamilyMessage(modelId, systemPrompt, messages, functions)
 			return
 		}
 
@@ -158,6 +159,11 @@ export class OpenAiHandler extends BaseProvider implements SingleCompletionHandl
 				...(reasoning && reasoning),
 			}
 
+			if (this.options.useNativeToolCalls && functions && functions.length > 0) {
+				;(requestOptions as any).functions = functions
+				;(requestOptions as any).function_call = "auto"
+			}
+
 			// @TODO: Move this to the `getModelParams` function.
 			if (this.options.includeMaxTokens) {
 				requestOptions.max_tokens = modelInfo.maxTokens
@@ -222,6 +228,11 @@ export class OpenAiHandler extends BaseProvider implements SingleCompletionHandl
 						: [systemMessage, ...convertToOpenAiMessages(messages)],
 			}
 
+			if (this.options.useNativeToolCalls && functions && functions.length > 0) {
+				;(requestOptions as any).functions = functions
+				;(requestOptions as any).function_call = "auto"
+			}
+
 			const response = await this.client.chat.completions.create(
 				requestOptions,
 				this._isAzureAiInference(modelUrl) ? { path: OPENAI_AZURE_AI_INFERENCE_PATH } : {},
@@ -281,6 +292,7 @@ export class OpenAiHandler extends BaseProvider implements SingleCompletionHandl
 		modelId: string,
 		systemPrompt: string,
 		messages: Anthropic.Messages.MessageParam[],
+		functions?: any[],
 	): ApiStream {
 		if (this.options.openAiStreamingEnabled ?? true) {
 			const methodIsAzureAiInference = this._isAzureAiInference(this.options.openAiBaseUrl)
@@ -300,6 +312,9 @@ export class OpenAiHandler extends BaseProvider implements SingleCompletionHandl
 					stream: true,
 					...(isGrokXAI ? {} : { stream_options: { include_usage: true } }),
 					reasoning_effort: this.getModel().info.reasoningEffort,
+					...(this.options.useNativeToolCalls && functions && functions.length > 0
+						? { functions, function_call: "auto" }
+						: {}),
 				},
 				methodIsAzureAiInference ? { path: OPENAI_AZURE_AI_INFERENCE_PATH } : {},
 			)
@@ -315,6 +330,11 @@ export class OpenAiHandler extends BaseProvider implements SingleCompletionHandl
 					},
 					...convertToOpenAiMessages(messages),
 				],
+			}
+
+			if (this.options.useNativeToolCalls && functions && functions.length > 0) {
+				;(requestOptions as any).functions = functions
+				;(requestOptions as any).function_call = "auto"
 			}
 
 			const methodIsAzureAiInference = this._isAzureAiInference(this.options.openAiBaseUrl)
@@ -339,6 +359,17 @@ export class OpenAiHandler extends BaseProvider implements SingleCompletionHandl
 				yield {
 					type: "text",
 					text: delta.content,
+				}
+			}
+
+			if (delta?.tool_calls) {
+				for (const call of delta.tool_calls) {
+					yield {
+						type: "tool_use",
+						name: call.function?.name ?? "",
+						params: call.function?.arguments ? JSON.parse(call.function.arguments) : {},
+						partial: true,
+					}
 				}
 			}
 
