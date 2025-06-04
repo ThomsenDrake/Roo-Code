@@ -49,7 +49,7 @@ import { codebaseSearchTool } from "../tools/codebaseSearchTool"
  * as it becomes available.
  */
 
-export async function presentAssistantMessage(cline: Task) {
+export async function presentAssistantMessage(cline: Task, useNativeToolCalls = false) {
 	if (cline.abort) {
 		throw new Error(`[Cline#presentAssistantMessage] task ${cline.taskId}.${cline.instanceId} aborted`)
 	}
@@ -289,7 +289,7 @@ export async function presentAssistantMessage(cline: Task) {
 			// If block is partial, remove partial closing tag so its not
 			// presented to user.
 			const removeClosingTag = (tag: ToolParamName, text?: string): string => {
-				if (!block.partial) {
+				if (useNativeToolCalls || !block.partial) {
 					return text || ""
 				}
 
@@ -517,13 +517,13 @@ export async function presentAssistantMessage(cline: Task) {
 		if (cline.currentStreamingContentIndex < cline.assistantMessageContent.length) {
 			// There are already more content blocks to stream, so we'll call
 			// this function ourselves.
-			presentAssistantMessage(cline)
+			presentAssistantMessage(cline, useNativeToolCalls)
 			return
 		}
 	}
 
 	// Block is partial, but the read stream may have finished.
 	if (cline.presentAssistantMessageHasPendingUpdates) {
-		presentAssistantMessage(cline)
+		presentAssistantMessage(cline, useNativeToolCalls)
 	}
 }
