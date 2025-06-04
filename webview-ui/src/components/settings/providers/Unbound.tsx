@@ -1,5 +1,6 @@
 import { useCallback, useState, useRef } from "react"
 import { VSCodeTextField } from "@vscode/webview-ui-toolkit/react"
+import { Checkbox } from "vscrui"
 import { useQueryClient } from "@tanstack/react-query"
 
 import { type ProviderSettings, type OrganizationAllowList, unboundDefaultModelId } from "@roo-code/types"
@@ -11,7 +12,7 @@ import { VSCodeButtonLink } from "@src/components/common/VSCodeButtonLink"
 import { vscode } from "@src/utils/vscode"
 import { Button } from "@src/components/ui"
 
-import { inputEventTransform } from "../transforms"
+import { inputEventTransform, noTransform } from "../transforms"
 import { ModelPicker } from "../ModelPicker"
 
 type UnboundProps = {
@@ -177,6 +178,11 @@ export const Unbound = ({
 				setApiConfigurationField={setApiConfigurationField}
 				organizationAllowList={organizationAllowList}
 			/>
+			<Checkbox
+				checked={apiConfiguration?.useNativeToolCalls ?? false}
+				onChange={handleInputChange("useNativeToolCalls", noTransform)}>
+				{t("settings:providers.useNativeToolCalls")}
+			</Checkbox>
 		</>
 	)
 }

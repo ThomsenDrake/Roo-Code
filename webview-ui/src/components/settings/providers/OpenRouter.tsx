@@ -124,6 +124,11 @@ export const OpenRouter = ({
 							}}
 						/>
 					</Checkbox>
+					<Checkbox
+						checked={apiConfiguration?.useNativeToolCalls ?? false}
+						onChange={handleInputChange("useNativeToolCalls", noTransform)}>
+						{t("settings:providers.useNativeToolCalls")}
+					</Checkbox>
 				</>
 			)}
 			<ModelPicker

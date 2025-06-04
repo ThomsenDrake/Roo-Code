@@ -1,6 +1,7 @@
 import { useState, useCallback } from "react"
 import { useEvent } from "react-use"
 import { VSCodeTextField, VSCodeRadioGroup, VSCodeRadio } from "@vscode/webview-ui-toolkit/react"
+import { Checkbox } from "vscrui"
 
 import type { ProviderSettings } from "@roo-code/types"
 
@@ -8,7 +9,7 @@ import { ExtensionMessage } from "@roo/ExtensionMessage"
 
 import { useAppTranslation } from "@src/i18n/TranslationContext"
 
-import { inputEventTransform } from "../transforms"
+import { inputEventTransform, noTransform } from "../transforms"
 
 type OllamaProps = {
 	apiConfiguration: ProviderSettings
@@ -82,6 +83,11 @@ export const Ollama = ({ apiConfiguration, setApiConfigurationField }: OllamaPro
 				{t("settings:providers.ollama.description")}
 				<span className="text-vscode-errorForeground ml-1">{t("settings:providers.ollama.warning")}</span>
 			</div>
+			<Checkbox
+				checked={apiConfiguration?.useNativeToolCalls ?? false}
+				onChange={handleInputChange("useNativeToolCalls", noTransform)}>
+				{t("settings:providers.useNativeToolCalls")}
+			</Checkbox>
 		</>
 	)
 }

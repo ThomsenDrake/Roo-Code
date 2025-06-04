@@ -862,8 +862,11 @@ describe("Cline", () => {
 			const { parseAssistantMessageV2 } = require("../../assistant-message/parseAssistantMessageV2")
 			const readFileModule = require("../../tools/readFileTool")
 			const readFileSpy = jest.spyOn(readFileModule, "readFileTool").mockResolvedValue(undefined)
-			jest.spyOn(require("../../assistant-message"), "parseAssistantMessage").mockImplementation((msg: string) =>
-				parseAssistantMessageV2(msg, true),
+			jest.spyOn(require("../../assistant-message"), "parseAssistantMessage").mockImplementation(
+				(...args: unknown[]) => {
+					const msg = args[0] as string
+					return parseAssistantMessageV2(msg, true)
+				},
 			)
 
 			const [cline, task] = Task.create({
