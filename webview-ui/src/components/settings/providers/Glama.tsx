@@ -1,5 +1,6 @@
 import { useCallback } from "react"
 import { VSCodeTextField } from "@vscode/webview-ui-toolkit/react"
+import { Checkbox } from "vscrui"
 
 import { type ProviderSettings, type OrganizationAllowList, glamaDefaultModelId } from "@roo-code/types"
 
@@ -9,7 +10,7 @@ import { useAppTranslation } from "@src/i18n/TranslationContext"
 import { getGlamaAuthUrl } from "@src/oauth/urls"
 import { VSCodeButtonLink } from "@src/components/common/VSCodeButtonLink"
 
-import { inputEventTransform } from "../transforms"
+import { inputEventTransform, noTransform } from "../transforms"
 import { ModelPicker } from "../ModelPicker"
 
 type GlamaProps = {
@@ -68,6 +69,11 @@ export const Glama = ({
 				serviceUrl="https://glama.ai/models"
 				organizationAllowList={organizationAllowList}
 			/>
+			<Checkbox
+				checked={apiConfiguration?.useNativeToolCalls ?? false}
+				onChange={handleInputChange("useNativeToolCalls", noTransform)}>
+				{t("settings:providers.useNativeToolCalls")}
+			</Checkbox>
 		</>
 	)
 }

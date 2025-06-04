@@ -1,12 +1,13 @@
 import { useCallback } from "react"
 import { VSCodeLink, VSCodeTextField } from "@vscode/webview-ui-toolkit/react"
+import { Checkbox } from "vscrui"
 
 import { type ProviderSettings, VERTEX_REGIONS } from "@roo-code/types"
 
 import { useAppTranslation } from "@src/i18n/TranslationContext"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@src/components/ui"
 
-import { inputEventTransform } from "../transforms"
+import { inputEventTransform, noTransform } from "../transforms"
 
 type VertexProps = {
 	apiConfiguration: ProviderSettings
@@ -91,6 +92,11 @@ export const Vertex = ({ apiConfiguration, setApiConfigurationField }: VertexPro
 					</SelectContent>
 				</Select>
 			</div>
+			<Checkbox
+				checked={apiConfiguration?.useNativeToolCalls ?? false}
+				onChange={handleInputChange("useNativeToolCalls", noTransform)}>
+				{t("settings:providers.useNativeToolCalls")}
+			</Checkbox>
 		</>
 	)
 }
