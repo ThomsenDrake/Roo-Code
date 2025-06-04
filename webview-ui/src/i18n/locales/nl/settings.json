@@ -510,6 +510,7 @@
 		"cacheReadsPrice": "Cache-leesprijs",
 		"cacheWritesPrice": "Cache-schrijfprijs",
 		"enableStreaming": "Streaming inschakelen",
+		"useNativeToolCalls": "Natieve tooloproepen gebruiken",
 		"enableR1Format": "R1-modelparameters inschakelen",
 		"enableR1FormatTips": "Moet ingeschakeld zijn bij gebruik van R1-modellen zoals QWQ om 400-fouten te voorkomen",
 		"useAzure": "Azure gebruiken",

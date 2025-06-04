@@ -510,6 +510,7 @@
 		"cacheReadsPrice": "Prix des lectures de cache",
 		"cacheWritesPrice": "Prix des écritures de cache",
 		"enableStreaming": "Activer le streaming",
+		"useNativeToolCalls": "Utiliser les appels d'outils natifs",
 		"enableR1Format": "Activer les paramètres du modèle R1",
 		"enableR1FormatTips": "Doit être activé lors de l'utilisation de modèles R1 tels que QWQ, pour éviter l'erreur 400",
 		"useAzure": "Utiliser Azure",

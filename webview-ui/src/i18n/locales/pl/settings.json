@@ -510,6 +510,7 @@
 		"cacheReadsPrice": "Cena odczytów bufora",
 		"cacheWritesPrice": "Cena zapisów bufora",
 		"enableStreaming": "Włącz strumieniowanie",
+		"useNativeToolCalls": "Używaj natywnych wywołań narzędzi",
 		"enableR1Format": "Włącz parametry modelu R1",
 		"enableR1FormatTips": "Należy włączyć podczas korzystania z modeli R1, takich jak QWQ, aby uniknąć błędu 400",
 		"useAzure": "Użyj Azure",
