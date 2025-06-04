@@ -221,6 +221,54 @@ describe("VsCodeLmHandler", () => {
 			})
 		})
 
+		it("should handle native tool calls when enabled", async () => {
+			handler = new VsCodeLmHandler({ ...defaultOptions, useNativeToolCalls: true })
+			handler["client"] = mockLanguageModelChat
+
+			const systemPrompt = "You are a helpful assistant"
+			const messages: Anthropic.Messages.MessageParam[] = [
+				{
+					role: "user" as const,
+					content: "Calculate 2+2",
+				},
+			]
+
+			const toolCallData = {
+				name: "calculator",
+				arguments: { operation: "add", numbers: [2, 2] },
+				callId: "call-1",
+			}
+
+			mockLanguageModelChat.sendRequest.mockResolvedValueOnce({
+				stream: (async function* () {
+					yield new vscode.LanguageModelToolCallPart(
+						toolCallData.callId,
+						toolCallData.name,
+						toolCallData.arguments,
+					)
+					return
+				})(),
+				text: (async function* () {
+					yield JSON.stringify({ type: "tool_call", ...toolCallData })
+					return
+				})(),
+			})
+
+			const stream = handler.createMessage(systemPrompt, messages)
+			const chunks = [] as any[]
+			for await (const chunk of stream) {
+				chunks.push(chunk)
+			}
+
+			expect(chunks).toHaveLength(2) // Tool call chunk + usage chunk
+			expect(chunks[0]).toEqual({
+				type: "tool_use",
+				name: toolCallData.name,
+				params: toolCallData.arguments,
+				partial: false,
+			})
+		})
+
 		it("should handle errors", async () => {
 			const systemPrompt = "You are a helpful assistant"
 			const messages: Anthropic.Messages.MessageParam[] = [
