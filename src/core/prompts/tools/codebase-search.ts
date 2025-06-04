@@ -17,3 +17,18 @@ Example: Searching for functions related to user authentication
 </codebase_search>
 `
 }
+
+export function getSchema() {
+	return {
+		name: "codebase_search",
+		description: "Semantic code search",
+		parameters: {
+			type: "object",
+			properties: {
+				query: { type: "string" },
+				path: { type: "string" },
+			},
+			required: ["query"],
+		},
+	}
+}

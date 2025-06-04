@@ -38,6 +38,7 @@ export class OpenAiNativeHandler extends BaseProvider implements SingleCompletio
 		messages: Anthropic.Messages.MessageParam[],
 		metadata?: ApiHandlerCreateMessageMetadata,
 	): ApiStream {
+		const tools = (metadata as any)?.tools as OpenAI.Chat.Completions.ChatCompletionTool[] | undefined
 		const model = this.getModel()
 		let id: "o3-mini" | "o3" | "o4-mini" | undefined
 
@@ -77,6 +78,7 @@ export class OpenAiNativeHandler extends BaseProvider implements SingleCompletio
 			],
 			stream: true,
 			stream_options: { include_usage: true },
+			...(this.options.useNativeToolCalls && tools ? { tools } : {}),
 		})
 
 		yield* this.handleStreamResponse(response, model)
@@ -102,6 +104,7 @@ export class OpenAiNativeHandler extends BaseProvider implements SingleCompletio
 			stream: true,
 			stream_options: { include_usage: true },
 			...(reasoning && reasoning),
+			...(this.options.useNativeToolCalls && tools ? { tools } : {}),
 		})
 
 		yield* this.handleStreamResponse(stream, model)
@@ -118,6 +121,7 @@ export class OpenAiNativeHandler extends BaseProvider implements SingleCompletio
 			messages: [{ role: "system", content: systemPrompt }, ...convertToOpenAiMessages(messages)],
 			stream: true,
 			stream_options: { include_usage: true },
+			...(this.options.useNativeToolCalls && tools ? { tools } : {}),
 		})
 
 		yield* this.handleStreamResponse(stream, model)

@@ -21,3 +21,18 @@ Example:
 </new_task>
 `
 }
+
+export function getSchema() {
+	return {
+		name: "new_task",
+		description: "Start a new task in a mode",
+		parameters: {
+			type: "object",
+			properties: {
+				mode: { type: "string" },
+				message: { type: "string" },
+			},
+			required: ["mode", "message"],
+		},
+	}
+}

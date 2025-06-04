@@ -64,6 +64,7 @@ const baseProviderSettingsSchema = z.object({
 	reasoningEffort: reasoningEffortsSchema.optional(),
 	modelMaxTokens: z.number().optional(),
 	modelMaxThinkingTokens: z.number().optional(),
+	useNativeToolCalls: z.boolean().optional(),
 })
 
 // Several of the providers share common model config properties.
@@ -347,6 +348,7 @@ export const PROVIDER_SETTINGS_KEYS = keysOf<ProviderSettings>()([
 	"fuzzyMatchThreshold",
 	"modelTemperature",
 	"rateLimitSeconds",
+	"useNativeToolCalls",
 	// Fake AI
 	"fakeAi",
 	// X.AI (Grok)

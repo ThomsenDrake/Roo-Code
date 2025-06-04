@@ -12,3 +12,17 @@ Example: Requesting instructions to create an MCP Server
 <task>create_mcp_server</task>
 </fetch_instructions>`
 }
+
+export function getSchema() {
+	return {
+		name: "fetch_instructions",
+		description: "Fetch task instructions",
+		parameters: {
+			type: "object",
+			properties: {
+				task: { type: "string" },
+			},
+			required: ["task"],
+		},
+	}
+}

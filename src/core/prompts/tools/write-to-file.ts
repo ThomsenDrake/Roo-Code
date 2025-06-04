@@ -38,3 +38,19 @@ Example: Requesting to write to frontend-config.json
 <line_count>14</line_count>
 </write_to_file>`
 }
+
+export function getSchema() {
+	return {
+		name: "write_to_file",
+		description: "Write content to a file",
+		parameters: {
+			type: "object",
+			properties: {
+				path: { type: "string" },
+				content: { type: "string" },
+				line_count: { type: "integer" },
+			},
+			required: ["path", "content", "line_count"],
+		},
+	}
+}

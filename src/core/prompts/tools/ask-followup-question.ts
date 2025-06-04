@@ -27,3 +27,18 @@ Example: Requesting to ask the user for the path to the frontend-config.json fil
 </follow_up>
 </ask_followup_question>`
 }
+
+export function getSchema() {
+	return {
+		name: "ask_followup_question",
+		description: "Ask the user a follow-up question",
+		parameters: {
+			type: "object",
+			properties: {
+				question: { type: "string" },
+				follow_up: { type: "array", items: { type: "string" } },
+			},
+			required: ["question", "follow_up"],
+		},
+	}
+}

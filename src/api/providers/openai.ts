@@ -77,6 +77,7 @@ export class OpenAiHandler extends BaseProvider implements SingleCompletionHandl
 		messages: Anthropic.Messages.MessageParam[],
 		metadata?: ApiHandlerCreateMessageMetadata,
 	): ApiStream {
+		const tools = (metadata as any)?.tools as OpenAI.Chat.Completions.ChatCompletionTool[] | undefined
 		const { info: modelInfo, reasoning } = this.getModel()
 		const modelUrl = this.options.openAiBaseUrl ?? ""
 		const modelId = this.options.openAiModelId ?? ""
@@ -156,6 +157,7 @@ export class OpenAiHandler extends BaseProvider implements SingleCompletionHandl
 				stream: true as const,
 				...(isGrokXAI ? {} : { stream_options: { include_usage: true } }),
 				...(reasoning && reasoning),
+				...(this.options.useNativeToolCalls && tools ? { tools } : {}),
 			}
 
 			// @TODO: Move this to the `getModelParams` function.
@@ -220,6 +222,7 @@ export class OpenAiHandler extends BaseProvider implements SingleCompletionHandl
 					: enabledLegacyFormat
 						? [systemMessage, ...convertToSimpleMessages(messages)]
 						: [systemMessage, ...convertToOpenAiMessages(messages)],
+				...(this.options.useNativeToolCalls && tools ? { tools } : {}),
 			}
 
 			const response = await this.client.chat.completions.create(
