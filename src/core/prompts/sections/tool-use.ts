@@ -24,3 +24,15 @@ For example, to use the new_task tool:
 
 Always use the actual tool name as the XML tag name for proper parsing and execution.`
 }
+
+export function buildToolUseSection(useNative: boolean): string {
+	if (useNative) {
+		return `====
+
+TOOL USE
+
+You have access to a set of tools that can be invoked using OpenAI/Claude JSON tool calling. Include \`\"function_call\": \"auto\"\` in your request and provide arguments that follow each tool's JSON schema.`
+	}
+
+	return getSharedToolUseSection()
+}

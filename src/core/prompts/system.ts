@@ -18,6 +18,7 @@ import {
 	getSystemInfoSection,
 	getObjectiveSection,
 	getSharedToolUseSection,
+	buildToolUseSection,
 	getMcpServersSection,
 	getToolUseGuidelinesSection,
 	getCapabilitiesSection,
@@ -30,6 +31,7 @@ async function generatePrompt(
 	context: vscode.ExtensionContext,
 	cwd: string,
 	supportsComputerUse: boolean,
+	useNativeToolCalling: boolean,
 	mode: Mode,
 	mcpHub?: McpHub,
 	diffStrategy?: DiffStrategy,
@@ -69,7 +71,7 @@ async function generatePrompt(
 
 ${markdownFormattingSection()}
 
-${getSharedToolUseSection()}
+${buildToolUseSection(useNativeToolCalling)}
 
 ${getToolDescriptionsForMode(
 	mode,
@@ -122,6 +124,7 @@ export const SYSTEM_PROMPT = async (
 	rooIgnoreInstructions?: string,
 	partialReadsEnabled?: boolean,
 	settings?: Record<string, any>,
+	useNativeToolCalling?: boolean,
 ): Promise<string> => {
 	if (!context) {
 		throw new Error("Extension context is required for generating system prompt")
@@ -181,6 +184,7 @@ ${customInstructions}`
 		context,
 		cwd,
 		supportsComputerUse,
+		useNativeToolCalling ?? false,
 		currentMode.slug,
 		mcpHub,
 		effectiveDiffStrategy,
