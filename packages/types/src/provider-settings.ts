@@ -59,16 +59,10 @@ const baseProviderSettingsSchema = z.object({
 	modelTemperature: z.number().nullish(),
 	rateLimitSeconds: z.number().optional(),
 	useNativeToolCalls: z.boolean().optional(),
-
-	// Enable native tool calling for providers that support it
-	useNativeToolCalls: z.boolean().optional(),
-
-	// Model reasoning.
 	enableReasoningEffort: z.boolean().optional(),
 	reasoningEffort: reasoningEffortsSchema.optional(),
 	modelMaxTokens: z.number().optional(),
 	modelMaxThinkingTokens: z.number().optional(),
-	useNativeToolCalls: z.boolean().optional(),
 })
 
 // Several of the providers share common model config properties.
