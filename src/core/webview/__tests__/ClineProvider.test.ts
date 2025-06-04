@@ -1718,6 +1718,7 @@ describe("ClineProvider", () => {
 			const testApiConfig = {
 				apiProvider: "anthropic" as const,
 				apiKey: "test-key",
+				useNativeToolCalls: true,
 			}
 
 			// Trigger upsertApiConfiguration
@@ -1744,12 +1745,20 @@ describe("ClineProvider", () => {
 			await provider.resolveWebviewView(mockWebviewView)
 			const messageHandler = (mockWebviewView.webview.onDidReceiveMessage as jest.Mock).mock.calls[0][0]
 
-			// Mock buildApiHandler to throw an error
+			// Mock buildApiHandler so first call succeeds for getState
+			// and second call throws an error when assigning to the task
 			const { buildApiHandler } = require("../../../api")
 
-			;(buildApiHandler as jest.Mock).mockImplementationOnce(() => {
-				throw new Error("API handler error")
-			})
+			;(buildApiHandler as jest.Mock)
+				.mockImplementationOnce(() => ({
+					getModel: () => ({ info: { supportsNativeToolCalling: false } }),
+				}))
+				.mockImplementationOnce(() => ({
+					getModel: () => ({ info: { supportsNativeToolCalling: false } }),
+				}))
+				.mockImplementationOnce(() => {
+					throw new Error("API handler error")
+				})
 			;(provider as any).providerSettingsManager = {
 				setModeConfig: jest.fn(),
 				saveConfig: jest.fn().mockResolvedValue(undefined),
@@ -1765,6 +1774,7 @@ describe("ClineProvider", () => {
 			const testApiConfig = {
 				apiProvider: "anthropic" as const,
 				apiKey: "test-key",
+				useNativeToolCalls: true,
 			}
 
 			// Trigger upsertApiConfiguration

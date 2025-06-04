@@ -7,6 +7,7 @@ import {
 	providerSettingsSchemaDiscriminated,
 } from "@roo-code/types"
 import { TelemetryService } from "@roo-code/telemetry"
+import { buildApiHandler } from "../../api"
 
 import { Mode, modes } from "../../shared/modes"
 
@@ -460,6 +461,17 @@ export class ProviderSettingsManager {
 				},
 				{} as Record<string, ProviderSettingsWithId>,
 			)
+
+			for (const [_name, apiConfig] of Object.entries(apiConfigs)) {
+				if (apiConfig.useNativeToolCalls === undefined) {
+					try {
+						const handler = buildApiHandler(apiConfig)
+						apiConfig.useNativeToolCalls = !!handler.getModel().info.supportsNativeToolCalling
+					} catch {
+						apiConfig.useNativeToolCalls = false
+					}
+				}
+			}
 
 			return {
 				...providerProfiles,

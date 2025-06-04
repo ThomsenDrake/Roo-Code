@@ -1430,6 +1430,15 @@ export class ClineProvider
 		// Build the apiConfiguration object combining state values and secrets.
 		const providerSettings = this.contextProxy.getProviderSettings()
 
+		if (providerSettings.useNativeToolCalls === undefined) {
+			try {
+				const handler = buildApiHandler(providerSettings)
+				providerSettings.useNativeToolCalls = !!handler.getModel().info.supportsNativeToolCalling
+			} catch {
+				providerSettings.useNativeToolCalls = false
+			}
+		}
+
 		// Ensure apiProvider is set properly if not already in state
 		if (!providerSettings.apiProvider) {
 			providerSettings.apiProvider = apiProvider
@@ -1489,6 +1498,7 @@ export class ClineProvider
 			ttsEnabled: stateValues.ttsEnabled ?? false,
 			ttsSpeed: stateValues.ttsSpeed ?? 1.0,
 			diffEnabled: stateValues.diffEnabled ?? true,
+			useNativeToolCalls: providerSettings.useNativeToolCalls ?? false,
 			enableCheckpoints: stateValues.enableCheckpoints ?? true,
 			soundVolume: stateValues.soundVolume,
 			browserViewportSize: stateValues.browserViewportSize ?? "900x600",
