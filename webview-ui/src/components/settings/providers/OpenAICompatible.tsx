@@ -190,6 +190,11 @@ export const OpenAICompatible = ({
 					/>
 				)}
 			</div>
+			<Checkbox
+				checked={apiConfiguration?.useNativeToolCalls ?? false}
+				onChange={handleInputChange("useNativeToolCalls", noTransform)}>
+				{t("settings:providers.useNativeToolCalls")}
+			</Checkbox>
 
 			{/* Custom Headers UI */}
 			<div className="mb-4">

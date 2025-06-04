@@ -1,4 +1,5 @@
 import { useState, useCallback } from "react"
+import { Checkbox } from "vscrui"
 import { useEvent } from "react-use"
 import { LanguageModelChatSelector } from "vscode"
 
@@ -9,7 +10,7 @@ import { ExtensionMessage } from "@roo/ExtensionMessage"
 import { useAppTranslation } from "@src/i18n/TranslationContext"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@src/components/ui"
 
-import { inputEventTransform } from "../transforms"
+import { inputEventTransform, noTransform } from "../transforms"
 
 type VSCodeLMProps = {
 	apiConfiguration: ProviderSettings
@@ -81,6 +82,11 @@ export const VSCodeLM = ({ apiConfiguration, setApiConfigurationField }: VSCodeL
 					</div>
 				)}
 			</div>
+			<Checkbox
+				checked={apiConfiguration?.useNativeToolCalls ?? false}
+				onChange={handleInputChange("useNativeToolCalls", noTransform)}>
+				{t("settings:providers.useNativeToolCalls")}
+			</Checkbox>
 			<div className="text-sm text-vscode-errorForeground">{t("settings:providers.vscodeLmWarning")}</div>
 		</>
 	)

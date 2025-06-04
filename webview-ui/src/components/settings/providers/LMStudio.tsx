@@ -9,7 +9,7 @@ import type { ProviderSettings } from "@roo-code/types"
 import { useAppTranslation } from "@src/i18n/TranslationContext"
 import { ExtensionMessage } from "@roo/ExtensionMessage"
 
-import { inputEventTransform } from "../transforms"
+import { inputEventTransform, noTransform } from "../transforms"
 
 type LMStudioProps = {
 	apiConfiguration: ProviderSettings
@@ -133,6 +133,11 @@ export const LMStudio = ({ apiConfiguration, setApiConfigurationField }: LMStudi
 					)}
 				</>
 			)}
+			<Checkbox
+				checked={apiConfiguration?.useNativeToolCalls ?? false}
+				onChange={handleInputChange("useNativeToolCalls", noTransform)}>
+				{t("settings:providers.useNativeToolCalls")}
+			</Checkbox>
 			<div className="text-sm text-vscode-descriptionForeground">
 				<Trans
 					i18nKey="settings:providers.lmStudio.description"

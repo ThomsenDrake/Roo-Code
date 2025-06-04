@@ -1,5 +1,6 @@
 import { useCallback, useState, useEffect, useRef } from "react"
 import { VSCodeTextField } from "@vscode/webview-ui-toolkit/react"
+import { Checkbox } from "vscrui"
 
 import { type ProviderSettings, type OrganizationAllowList, litellmDefaultModelId } from "@roo-code/types"
 
@@ -11,7 +12,7 @@ import { useExtensionState } from "@src/context/ExtensionStateContext"
 import { useAppTranslation } from "@src/i18n/TranslationContext"
 import { Button } from "@src/components/ui"
 
-import { inputEventTransform } from "../transforms"
+import { inputEventTransform, noTransform } from "../transforms"
 import { ModelPicker } from "../ModelPicker"
 
 type LiteLLMProps = {
@@ -144,6 +145,11 @@ export const LiteLLM = ({ apiConfiguration, setApiConfigurationField, organizati
 				setApiConfigurationField={setApiConfigurationField}
 				organizationAllowList={organizationAllowList}
 			/>
+			<Checkbox
+				checked={apiConfiguration?.useNativeToolCalls ?? false}
+				onChange={handleInputChange("useNativeToolCalls", noTransform)}>
+				{t("settings:providers.useNativeToolCalls")}
+			</Checkbox>
 		</>
 	)
 }

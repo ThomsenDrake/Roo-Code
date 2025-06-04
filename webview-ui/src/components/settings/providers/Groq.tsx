@@ -1,12 +1,13 @@
 import { useCallback } from "react"
 import { VSCodeTextField } from "@vscode/webview-ui-toolkit/react"
+import { Checkbox } from "vscrui"
 
 import type { ProviderSettings } from "@roo-code/types"
 
 import { useAppTranslation } from "@src/i18n/TranslationContext"
 import { VSCodeButtonLink } from "@src/components/common/VSCodeButtonLink"
 
-import { inputEventTransform } from "../transforms"
+import { inputEventTransform, noTransform } from "../transforms"
 
 type GroqProps = {
 	apiConfiguration: ProviderSettings
@@ -45,6 +46,11 @@ export const Groq = ({ apiConfiguration, setApiConfigurationField }: GroqProps) 
 					{t("settings:providers.getGroqApiKey")}
 				</VSCodeButtonLink>
 			)}
+			<Checkbox
+				checked={apiConfiguration?.useNativeToolCalls ?? false}
+				onChange={handleInputChange("useNativeToolCalls", noTransform)}>
+				{t("settings:providers.useNativeToolCalls")}
+			</Checkbox>
 		</>
 	)
 }
