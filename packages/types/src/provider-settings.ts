@@ -68,6 +68,7 @@ const baseProviderSettingsSchema = z.object({
 	reasoningEffort: reasoningEffortsSchema.optional(),
 	modelMaxTokens: z.number().optional(),
 	modelMaxThinkingTokens: z.number().optional(),
+	useNativeToolCalls: z.boolean().optional(),
 })
 
 // Several of the providers share common model config properties.

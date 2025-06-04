@@ -22,3 +22,15 @@ Examples:
 <path>src/</path>
 </list_code_definition_names>`
 }
+
+export function getSchema() {
+	return {
+		name: "list_code_definition_names",
+		description: "List definition names from code",
+		parameters: {
+			type: "object",
+			properties: { path: { type: "string" } },
+			required: ["path"],
+		},
+	}
+}

@@ -22,3 +22,18 @@ Example: Requesting to access an MCP resource
 <uri>weather://san-francisco/current</uri>
 </access_mcp_resource>`
 }
+
+export function getSchema() {
+	return {
+		name: "access_mcp_resource",
+		description: "Access a resource from an MCP server",
+		parameters: {
+			type: "object",
+			properties: {
+				server_name: { type: "string" },
+				uri: { type: "string" },
+			},
+			required: ["server_name", "uri"],
+		},
+	}
+}

@@ -36,7 +36,7 @@ import { t } from "../../i18n"
 import { ClineApiReqCancelReason, ClineApiReqInfo } from "../../shared/ExtensionMessage"
 import { getApiMetrics } from "../../shared/getApiMetrics"
 import { ClineAskResponse } from "../../shared/WebviewMessage"
-import { defaultModeSlug } from "../../shared/modes"
+import { defaultModeSlug, type Mode } from "../../shared/modes"
 import { DiffStrategy } from "../../shared/tools"
 
 // services
@@ -44,6 +44,8 @@ import { UrlContentFetcher } from "../../services/browser/UrlContentFetcher"
 import { BrowserSession } from "../../services/browser/BrowserSession"
 import { McpHub } from "../../services/mcp/McpHub"
 import { McpServerManager } from "../../services/mcp/McpServerManager"
+import { CodeIndexManager } from "../../services/code-index/manager"
+import { buildToolSchemas } from "../prompts/tools"
 import { RepoPerTaskCheckpointService } from "../../services/checkpoints"
 
 // integrations
@@ -1567,6 +1569,13 @@ export class Task extends EventEmitter<ClineEvents> {
 			alwaysApproveResubmit,
 			requestDelaySeconds,
 			mode,
+			customModes,
+			experiments,
+			browserViewportSize,
+			browserToolEnabled,
+			maxConcurrentFileReads,
+			maxReadFileLine,
+			useNativeToolCalls,
 			autoCondenseContext = true,
 			autoCondenseContextPercent = 100,
 		} = state ?? {}
@@ -1684,9 +1693,33 @@ export class Task extends EventEmitter<ClineEvents> {
 			}
 		}
 
-		const metadata: ApiHandlerCreateMessageMetadata = {
+		let tools
+		if (useNativeToolCalls) {
+			const provider = this.providerRef.deref()
+			const mcpHub =
+				state?.mcpEnabled !== false && provider
+					? await McpServerManager.getInstance(provider.context, provider)
+					: undefined
+			const codeIndexManager = provider ? CodeIndexManager.getInstance(provider.context) : undefined
+			tools = buildToolSchemas(
+				(mode ?? defaultModeSlug) as Mode,
+				this.cwd,
+				(this.api.getModel().info.supportsComputerUse ?? false) && (browserToolEnabled ?? true),
+				codeIndexManager,
+				this.diffStrategy,
+				browserViewportSize,
+				mcpHub,
+				customModes,
+				experiments,
+				maxReadFileLine !== -1,
+				{ maxConcurrentFileReads },
+			)
+		}
+
+		const metadata: ApiHandlerCreateMessageMetadata & { tools?: any[] } = {
 			mode: mode,
 			taskId: this.taskId,
+			...(tools ? { tools } : {}),
 		}
 
 		const stream = this.api.createMessage(systemPrompt, cleanConversationHistory, metadata)

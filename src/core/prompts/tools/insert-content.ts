@@ -31,3 +31,19 @@ Example for appending to the end of file:
 </insert_content>
 `
 }
+
+export function getSchema() {
+	return {
+		name: "insert_content",
+		description: "Insert content into a file",
+		parameters: {
+			type: "object",
+			properties: {
+				path: { type: "string" },
+				line: { type: "integer" },
+				content: { type: "string" },
+			},
+			required: ["path", "line", "content"],
+		},
+	}
+}

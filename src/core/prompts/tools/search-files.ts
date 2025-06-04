@@ -21,3 +21,19 @@ Example: Requesting to search for all .ts files in the current directory
 <file_pattern>*.ts</file_pattern>
 </search_files>`
 }
+
+export function getSchema() {
+	return {
+		name: "search_files",
+		description: "Regex search across files",
+		parameters: {
+			type: "object",
+			properties: {
+				path: { type: "string" },
+				regex: { type: "string" },
+				file_pattern: { type: "string" },
+			},
+			required: ["path", "regex"],
+		},
+	}
+}
