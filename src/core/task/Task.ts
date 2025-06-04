@@ -1525,9 +1525,10 @@ export class Task extends EventEmitter<ClineEvents> {
 			maxReadFileLine,
 		} = state ?? {}
 
-		const useNativeToolCalling = ["openai", "openai-native", "anthropic"].includes(
+		const providerSupportsNative = ["openai", "openai-native", "anthropic"].includes(
 			apiConfiguration?.apiProvider || "",
 		)
+		const useNativeToolCalling = providerSupportsNative || (state?.useNativeToolCalls ?? false)
 
 		return await (async () => {
 			const provider = this.providerRef.deref()
