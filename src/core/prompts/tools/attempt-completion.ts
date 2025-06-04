@@ -21,3 +21,18 @@ I've updated the CSS
 <command>open index.html</command>
 </attempt_completion>`
 }
+
+export function getSchema() {
+	return {
+		name: "attempt_completion",
+		description: "Present the final result to the user",
+		parameters: {
+			type: "object",
+			properties: {
+				result: { type: "string" },
+				command: { type: "string" },
+			},
+			required: ["result"],
+		},
+	}
+}

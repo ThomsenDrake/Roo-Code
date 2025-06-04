@@ -18,3 +18,18 @@ Example: Requesting to list all files in the current directory
 <recursive>false</recursive>
 </list_files>`
 }
+
+export function getSchema() {
+	return {
+		name: "list_files",
+		description: "List files in a directory",
+		parameters: {
+			type: "object",
+			properties: {
+				path: { type: "string" },
+				recursive: { type: "boolean" },
+			},
+			required: ["path"],
+		},
+	}
+}

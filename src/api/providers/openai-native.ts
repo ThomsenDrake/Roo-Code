@@ -37,7 +37,9 @@ export class OpenAiNativeHandler extends BaseProvider implements SingleCompletio
 		systemPrompt: string,
 		messages: Anthropic.Messages.MessageParam[],
 		metadata?: ApiHandlerCreateMessageMetadata,
+		functions?: any[],
 	): ApiStream {
+		const tools = (metadata as any)?.tools as OpenAI.Chat.Completions.ChatCompletionTool[] | undefined
 		const model = this.getModel()
 		let id: "o3-mini" | "o3" | "o4-mini" | undefined
 
@@ -50,11 +52,11 @@ export class OpenAiNativeHandler extends BaseProvider implements SingleCompletio
 		}
 
 		if (id) {
-			yield* this.handleReasonerMessage(model, id, systemPrompt, messages)
+			yield* this.handleReasonerMessage(model, id, systemPrompt, messages, tools)
 		} else if (model.id.startsWith("o1")) {
-			yield* this.handleO1FamilyMessage(model, systemPrompt, messages)
+			yield* this.handleO1FamilyMessage(model, systemPrompt, messages, tools)
 		} else {
-			yield* this.handleDefaultModelMessage(model, systemPrompt, messages)
+			yield* this.handleDefaultModelMessage(model, systemPrompt, messages, tools)
 		}
 	}
 
@@ -62,6 +64,7 @@ export class OpenAiNativeHandler extends BaseProvider implements SingleCompletio
 		model: OpenAiNativeModel,
 		systemPrompt: string,
 		messages: Anthropic.Messages.MessageParam[],
+		tools?: OpenAI.Chat.Completions.ChatCompletionTool[],
 	): ApiStream {
 		// o1 supports developer prompt with formatting
 		// o1-preview and o1-mini only support user messages
@@ -77,6 +80,7 @@ export class OpenAiNativeHandler extends BaseProvider implements SingleCompletio
 			],
 			stream: true,
 			stream_options: { include_usage: true },
+			...(this.options.useNativeToolCalls && tools ? { tools } : {}),
 		})
 
 		yield* this.handleStreamResponse(response, model)
@@ -87,6 +91,7 @@ export class OpenAiNativeHandler extends BaseProvider implements SingleCompletio
 		family: "o3-mini" | "o3" | "o4-mini",
 		systemPrompt: string,
 		messages: Anthropic.Messages.MessageParam[],
+		tools?: OpenAI.Chat.Completions.ChatCompletionTool[],
 	): ApiStream {
 		const { reasoning } = this.getModel()
 
@@ -102,6 +107,7 @@ export class OpenAiNativeHandler extends BaseProvider implements SingleCompletio
 			stream: true,
 			stream_options: { include_usage: true },
 			...(reasoning && reasoning),
+			...(this.options.useNativeToolCalls && tools ? { tools } : {}),
 		})
 
 		yield* this.handleStreamResponse(stream, model)
@@ -111,6 +117,7 @@ export class OpenAiNativeHandler extends BaseProvider implements SingleCompletio
 		model: OpenAiNativeModel,
 		systemPrompt: string,
 		messages: Anthropic.Messages.MessageParam[],
+		tools?: OpenAI.Chat.Completions.ChatCompletionTool[],
 	): ApiStream {
 		const stream = await this.client.chat.completions.create({
 			model: model.id,
@@ -118,6 +125,7 @@ export class OpenAiNativeHandler extends BaseProvider implements SingleCompletio
 			messages: [{ role: "system", content: systemPrompt }, ...convertToOpenAiMessages(messages)],
 			stream: true,
 			stream_options: { include_usage: true },
+			...(this.options.useNativeToolCalls && tools ? { tools } : {}),
 		})
 
 		yield* this.handleStreamResponse(stream, model)
@@ -134,6 +142,17 @@ export class OpenAiNativeHandler extends BaseProvider implements SingleCompletio
 				yield {
 					type: "text",
 					text: delta.content,
+				}
+			}
+
+			if (delta?.tool_calls) {
+				for (const call of delta.tool_calls) {
+					yield {
+						type: "tool_use",
+						name: call.function?.name ?? "",
+						params: call.function?.arguments ? JSON.parse(call.function.arguments) : {},
+						partial: true,
+					}
 				}
 			}
 

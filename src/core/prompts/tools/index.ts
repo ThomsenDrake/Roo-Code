@@ -5,23 +5,26 @@ import { McpHub } from "../../../services/mcp/McpHub"
 import { Mode, getModeConfig, isToolAllowedForMode, getGroupName } from "../../../shared/modes"
 
 import { ToolArgs } from "./types"
-import { getExecuteCommandDescription } from "./execute-command"
-import { getReadFileDescription } from "./read-file"
-import { getFetchInstructionsDescription } from "./fetch-instructions"
-import { getWriteToFileDescription } from "./write-to-file"
-import { getSearchFilesDescription } from "./search-files"
-import { getListFilesDescription } from "./list-files"
-import { getInsertContentDescription } from "./insert-content"
-import { getSearchAndReplaceDescription } from "./search-and-replace"
-import { getListCodeDefinitionNamesDescription } from "./list-code-definition-names"
-import { getBrowserActionDescription } from "./browser-action"
-import { getAskFollowupQuestionDescription } from "./ask-followup-question"
-import { getAttemptCompletionDescription } from "./attempt-completion"
-import { getUseMcpToolDescription } from "./use-mcp-tool"
-import { getAccessMcpResourceDescription } from "./access-mcp-resource"
-import { getSwitchModeDescription } from "./switch-mode"
-import { getNewTaskDescription } from "./new-task"
-import { getCodebaseSearchDescription } from "./codebase-search"
+import { getExecuteCommandDescription, getSchema as getExecuteCommandSchema } from "./execute-command"
+import { getReadFileDescription, getSchema as getReadFileSchema } from "./read-file"
+import { getFetchInstructionsDescription, getSchema as getFetchInstructionsSchema } from "./fetch-instructions"
+import { getWriteToFileDescription, getSchema as getWriteToFileSchema } from "./write-to-file"
+import { getSearchFilesDescription, getSchema as getSearchFilesSchema } from "./search-files"
+import { getListFilesDescription, getSchema as getListFilesSchema } from "./list-files"
+import { getInsertContentDescription, getSchema as getInsertContentSchema } from "./insert-content"
+import { getSearchAndReplaceDescription, getSchema as getSearchAndReplaceSchema } from "./search-and-replace"
+import {
+	getListCodeDefinitionNamesDescription,
+	getSchema as getListCodeDefinitionNamesSchema,
+} from "./list-code-definition-names"
+import { getBrowserActionDescription, getSchema as getBrowserActionSchema } from "./browser-action"
+import { getAskFollowupQuestionDescription, getSchema as getAskFollowupQuestionSchema } from "./ask-followup-question"
+import { getAttemptCompletionDescription, getSchema as getAttemptCompletionSchema } from "./attempt-completion"
+import { getUseMcpToolDescription, getSchema as getUseMcpToolSchema } from "./use-mcp-tool"
+import { getAccessMcpResourceDescription, getSchema as getAccessMcpResourceSchema } from "./access-mcp-resource"
+import { getSwitchModeDescription, getSchema as getSwitchModeSchema } from "./switch-mode"
+import { getNewTaskDescription, getSchema as getNewTaskSchema } from "./new-task"
+import { getCodebaseSearchDescription, getSchema as getCodebaseSearchSchema } from "./codebase-search"
 import { CodeIndexManager } from "../../../services/code-index/manager"
 
 // Map of tool names to their description functions
@@ -45,6 +48,26 @@ const toolDescriptionMap: Record<string, (args: ToolArgs) => string | undefined>
 	search_and_replace: (args) => getSearchAndReplaceDescription(args),
 	apply_diff: (args) =>
 		args.diffStrategy ? args.diffStrategy.getToolDescription({ cwd: args.cwd, toolOptions: args.toolOptions }) : "",
+}
+
+const toolSchemaMap: Record<string, (args: ToolArgs) => any | undefined> = {
+	execute_command: () => getExecuteCommandSchema(),
+	read_file: () => getReadFileSchema(),
+	fetch_instructions: () => getFetchInstructionsSchema(),
+	write_to_file: () => getWriteToFileSchema(),
+	search_files: () => getSearchFilesSchema(),
+	list_files: () => getListFilesSchema(),
+	list_code_definition_names: () => getListCodeDefinitionNamesSchema(),
+	browser_action: () => getBrowserActionSchema(),
+	ask_followup_question: () => getAskFollowupQuestionSchema(),
+	attempt_completion: () => getAttemptCompletionSchema(),
+	use_mcp_tool: () => getUseMcpToolSchema(),
+	access_mcp_resource: () => getAccessMcpResourceSchema(),
+	codebase_search: () => getCodebaseSearchSchema(),
+	switch_mode: () => getSwitchModeSchema(),
+	new_task: () => getNewTaskSchema(),
+	insert_content: () => getInsertContentSchema(),
+	search_and_replace: () => getSearchAndReplaceSchema(),
 }
 
 export function getToolDescriptionsForMode(
@@ -122,6 +145,69 @@ export function getToolDescriptionsForMode(
 	return `# Tools\n\n${descriptions.filter(Boolean).join("\n\n")}`
 }
 
+export function buildToolSchemas(
+	mode: Mode,
+	cwd: string,
+	supportsComputerUse: boolean,
+	codeIndexManager?: CodeIndexManager,
+	diffStrategy?: DiffStrategy,
+	browserViewportSize?: string,
+	mcpHub?: McpHub,
+	customModes?: ModeConfig[],
+	experiments?: Record<string, boolean>,
+	partialReadsEnabled?: boolean,
+	settings?: Record<string, any>,
+): any[] {
+	const config = getModeConfig(mode, customModes)
+	const args: ToolArgs = {
+		cwd,
+		supportsComputerUse,
+		diffStrategy,
+		browserViewportSize,
+		mcpHub,
+		partialReadsEnabled,
+		settings,
+	}
+
+	const tools = new Set<string>()
+	config.groups.forEach((groupEntry) => {
+		const groupName = getGroupName(groupEntry)
+		const toolGroup = TOOL_GROUPS[groupName]
+		if (toolGroup) {
+			toolGroup.tools.forEach((tool) => {
+				if (
+					isToolAllowedForMode(
+						tool as ToolName,
+						mode,
+						customModes ?? [],
+						undefined,
+						undefined,
+						experiments ?? {},
+					)
+				) {
+					tools.add(tool)
+				}
+			})
+		}
+	})
+
+	ALWAYS_AVAILABLE_TOOLS.forEach((tool) => tools.add(tool))
+
+	if (
+		!codeIndexManager ||
+		!(codeIndexManager.isFeatureEnabled && codeIndexManager.isFeatureConfigured && codeIndexManager.isInitialized)
+	) {
+		tools.delete("codebase_search")
+	}
+
+	const schemas = Array.from(tools).map((toolName) => {
+		const schemaFn = toolSchemaMap[toolName]
+		return schemaFn ? schemaFn(args) : undefined
+	})
+
+	return schemas.filter(Boolean)
+}
+
 // Export individual description functions for backward compatibility
 export {
 	getExecuteCommandDescription,
@@ -140,4 +226,20 @@ export {
 	getInsertContentDescription,
 	getSearchAndReplaceDescription,
 	getCodebaseSearchDescription,
+	getExecuteCommandSchema,
+	getReadFileSchema,
+	getFetchInstructionsSchema,
+	getWriteToFileSchema,
+	getSearchFilesSchema,
+	getListFilesSchema,
+	getListCodeDefinitionNamesSchema,
+	getBrowserActionSchema,
+	getAskFollowupQuestionSchema,
+	getAttemptCompletionSchema,
+	getUseMcpToolSchema,
+	getAccessMcpResourceSchema,
+	getSwitchModeSchema,
+	getInsertContentSchema,
+	getSearchAndReplaceSchema,
+	getCodebaseSearchSchema,
 }

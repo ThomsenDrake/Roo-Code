@@ -83,3 +83,27 @@ ${
 }
 ${isMultipleReadsEnabled ? `- When you need to read more than ${maxConcurrentReads} files, prioritize the most critical files first, then use subsequent read_file requests for additional files` : ""}`
 }
+
+export function getSchema() {
+	return {
+		name: "read_file",
+		description: "Read one or more files",
+		parameters: {
+			type: "object",
+			properties: {
+				args: {
+					type: "array",
+					items: {
+						type: "object",
+						properties: {
+							path: { type: "string" },
+							line_range: { type: "string" },
+						},
+						required: ["path"],
+					},
+				},
+			},
+			required: ["args"],
+		},
+	}
+}

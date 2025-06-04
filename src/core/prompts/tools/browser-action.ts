@@ -57,3 +57,21 @@ Example: Requesting to click on the element at coordinates 450,300
 <coordinate>450,300</coordinate>
 </browser_action>`
 }
+
+export function getSchema() {
+	return {
+		name: "browser_action",
+		description: "Control a headless browser",
+		parameters: {
+			type: "object",
+			properties: {
+				action: { type: "string" },
+				url: { type: "string" },
+				coordinate: { type: "string" },
+				size: { type: "string" },
+				text: { type: "string" },
+			},
+			required: ["action"],
+		},
+	}
+}

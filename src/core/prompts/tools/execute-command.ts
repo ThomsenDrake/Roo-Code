@@ -23,3 +23,18 @@ Example: Requesting to execute ls in a specific directory if directed
 <cwd>/home/user/projects</cwd>
 </execute_command>`
 }
+
+export function getSchema() {
+	return {
+		name: "execute_command",
+		description: "Execute a CLI command on the system",
+		parameters: {
+			type: "object",
+			properties: {
+				command: { type: "string" },
+				cwd: { type: "string" },
+			},
+			required: ["command"],
+		},
+	}
+}

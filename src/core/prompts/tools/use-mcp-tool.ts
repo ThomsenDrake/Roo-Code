@@ -35,3 +35,19 @@ Example: Requesting to use an MCP tool
 </arguments>
 </use_mcp_tool>`
 }
+
+export function getSchema() {
+	return {
+		name: "use_mcp_tool",
+		description: "Use a connected MCP server tool",
+		parameters: {
+			type: "object",
+			properties: {
+				server_name: { type: "string" },
+				tool_name: { type: "string" },
+				arguments: { type: "object" },
+			},
+			required: ["server_name", "tool_name", "arguments"],
+		},
+	}
+}

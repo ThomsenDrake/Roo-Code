@@ -53,6 +53,8 @@ export const generateSystemPrompt = async (provider: ClineProvider, message: Web
 	// and browser tools are enabled in settings
 	const canUseBrowserTool = modelSupportsComputerUse && modeSupportsBrowser && (browserToolEnabled ?? true)
 
+	const useNativeToolCalling = ["openai", "openai-native", "anthropic"].includes(apiConfiguration.apiProvider || "")
+
 	const systemPrompt = await SYSTEM_PROMPT(
 		provider.context,
 		cwd,
@@ -73,6 +75,7 @@ export const generateSystemPrompt = async (provider: ClineProvider, message: Web
 		{
 			maxConcurrentFileReads,
 		},
+		useNativeToolCalling,
 	)
 
 	return systemPrompt

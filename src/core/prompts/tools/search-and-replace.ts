@@ -37,3 +37,23 @@ Examples:
 <ignore_case>true</ignore_case>
 </search_and_replace>`
 }
+
+export function getSchema() {
+	return {
+		name: "search_and_replace",
+		description: "Find and replace text in a file",
+		parameters: {
+			type: "object",
+			properties: {
+				path: { type: "string" },
+				search: { type: "string" },
+				replace: { type: "string" },
+				start_line: { type: "integer" },
+				end_line: { type: "integer" },
+				use_regex: { type: "boolean" },
+				ignore_case: { type: "boolean" },
+			},
+			required: ["path", "search", "replace"],
+		},
+	}
+}

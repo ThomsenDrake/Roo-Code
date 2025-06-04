@@ -43,6 +43,7 @@ export interface ApiHandler {
 		systemPrompt: string,
 		messages: Anthropic.Messages.MessageParam[],
 		metadata?: ApiHandlerCreateMessageMetadata,
+		functions?: any[],
 	): ApiStream
 
 	getModel(): { id: string; info: ModelInfo }

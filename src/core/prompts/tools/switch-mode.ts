@@ -16,3 +16,18 @@ Example: Requesting to switch to code mode
 <reason>Need to make code changes</reason>
 </switch_mode>`
 }
+
+export function getSchema() {
+	return {
+		name: "switch_mode",
+		description: "Request to switch modes",
+		parameters: {
+			type: "object",
+			properties: {
+				mode_slug: { type: "string" },
+				reason: { type: "string" },
+			},
+			required: ["mode_slug"],
+		},
+	}
+}
