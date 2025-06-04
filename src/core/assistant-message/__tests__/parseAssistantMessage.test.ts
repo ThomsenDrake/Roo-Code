@@ -338,3 +338,35 @@ const isEmptyTextContent = (block: AssistantMessageContent) =>
 		})
 	})
 })
+describe("parseAssistantMessageV2 JSON function_call", () => {
+	it("should parse JSON function_call into ToolUse", () => {
+		const json = JSON.stringify({
+			function_call: {
+				name: "read_file",
+				arguments: JSON.stringify({ path: "src/file.ts" }),
+			},
+		})
+		const result = parseAssistantMessageV2(json)
+		expect(result).toHaveLength(1)
+		const toolUse = result[0] as ToolUse
+		expect(toolUse.type).toBe("tool_use")
+		expect(toolUse.name).toBe("read_file")
+		expect(toolUse.params.path).toBe("src/file.ts")
+		expect(toolUse.partial).toBe(false)
+	})
+
+	it("should parse JSON function_call with multiple params", () => {
+		const json = JSON.stringify({
+			function_call: {
+				name: "read_file",
+				arguments: JSON.stringify({ path: "src/file.ts", start_line: 1, end_line: 10 }),
+			},
+		})
+		const result = parseAssistantMessageV2(json)
+		expect(result).toHaveLength(1)
+		const toolUse = result[0] as ToolUse
+		expect(toolUse.params.path).toBe("src/file.ts")
+		expect(toolUse.params.start_line).toBe("1")
+		expect(toolUse.params.end_line).toBe("10")
+	})
+})
