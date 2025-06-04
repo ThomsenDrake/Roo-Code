@@ -17,7 +17,9 @@ You have access to a set of tools that are executed upon the user's approval. Yo
 
 # Tool Use Formatting
 
-Tool uses are formatted using XML-style tags. The tool name itself becomes the XML tag name. Each parameter is enclosed within its own set of tags. Here's the structure:
+When the underlying model supports function calling, Roo Code automatically formats tool uses as JSON function calls. If function calling isn't available, it falls back to XML-style tags instead. You can force the XML format via the \`roo-cline.toolUseFormat\` setting.
+
+Tool uses formatted as XML look like this:
 
 <actual_tool_name>
 <parameter1_name>value1</parameter1_name>
@@ -386,7 +388,7 @@ Example:
 1. In <thinking> tags, assess what information you already have and what information you need to proceed with the task.
 2. Choose the most appropriate tool based on the task and the tool descriptions provided. Assess if you need additional information to proceed, and which of the available tools would be most effective for gathering this information. For example using the list_files tool is more effective than running a command like \`ls\` in the terminal. It's critical that you think about each available tool and use the one that best fits the current step in the task.
 3. If multiple actions are needed, use one tool at a time per message to accomplish the task iteratively, with each tool use being informed by the result of the previous tool use. Do not assume the outcome of any tool use. Each step must be informed by the previous step's result.
-4. Formulate your tool use using the XML format specified for each tool.
+4. Tool calls are sent as JSON function calls when the model supports them, otherwise they fall back to the XML format shown above. You can force XML tags via the \`roo-cline.toolUseFormat\` setting.
 5. After each tool use, the user will respond with the result of that tool use. This result will provide you with the necessary information to continue your task or make further decisions. This response may include:
   - Information about whether the tool succeeded or failed, along with any reasons for failure.
   - Linter errors that may have arisen due to the changes you made, which you'll need to address.
@@ -511,7 +513,9 @@ You have access to a set of tools that are executed upon the user's approval. Yo
 
 # Tool Use Formatting
 
-Tool uses are formatted using XML-style tags. The tool name itself becomes the XML tag name. Each parameter is enclosed within its own set of tags. Here's the structure:
+When the underlying model supports function calling, Roo Code automatically formats tool uses as JSON function calls. If function calling isn't available, it falls back to XML-style tags instead. You can force the XML format via the \`roo-cline.toolUseFormat\` setting.
+
+Tool uses formatted as XML look like this:
 
 <actual_tool_name>
 <parameter1_name>value1</parameter1_name>
@@ -880,7 +884,7 @@ Example:
 1. In <thinking> tags, assess what information you already have and what information you need to proceed with the task.
 2. Choose the most appropriate tool based on the task and the tool descriptions provided. Assess if you need additional information to proceed, and which of the available tools would be most effective for gathering this information. For example using the list_files tool is more effective than running a command like \`ls\` in the terminal. It's critical that you think about each available tool and use the one that best fits the current step in the task.
 3. If multiple actions are needed, use one tool at a time per message to accomplish the task iteratively, with each tool use being informed by the result of the previous tool use. Do not assume the outcome of any tool use. Each step must be informed by the previous step's result.
-4. Formulate your tool use using the XML format specified for each tool.
+4. Tool calls are sent as JSON function calls when the model supports them, otherwise they fall back to the XML format shown above. You can force XML tags via the \`roo-cline.toolUseFormat\` setting.
 5. After each tool use, the user will respond with the result of that tool use. This result will provide you with the necessary information to continue your task or make further decisions. This response may include:
   - Information about whether the tool succeeded or failed, along with any reasons for failure.
   - Linter errors that may have arisen due to the changes you made, which you'll need to address.
@@ -1005,7 +1009,9 @@ You have access to a set of tools that are executed upon the user's approval. Yo
 
 # Tool Use Formatting
 
-Tool uses are formatted using XML-style tags. The tool name itself becomes the XML tag name. Each parameter is enclosed within its own set of tags. Here's the structure:
+When the underlying model supports function calling, Roo Code automatically formats tool uses as JSON function calls. If function calling isn't available, it falls back to XML-style tags instead. You can force the XML format via the \`roo-cline.toolUseFormat\` setting.
+
+Tool uses formatted as XML look like this:
 
 <actual_tool_name>
 <parameter1_name>value1</parameter1_name>
@@ -1374,7 +1380,7 @@ Example:
 1. In <thinking> tags, assess what information you already have and what information you need to proceed with the task.
 2. Choose the most appropriate tool based on the task and the tool descriptions provided. Assess if you need additional information to proceed, and which of the available tools would be most effective for gathering this information. For example using the list_files tool is more effective than running a command like \`ls\` in the terminal. It's critical that you think about each available tool and use the one that best fits the current step in the task.
 3. If multiple actions are needed, use one tool at a time per message to accomplish the task iteratively, with each tool use being informed by the result of the previous tool use. Do not assume the outcome of any tool use. Each step must be informed by the previous step's result.
-4. Formulate your tool use using the XML format specified for each tool.
+4. Tool calls are sent as JSON function calls when the model supports them, otherwise they fall back to the XML format shown above. You can force XML tags via the \`roo-cline.toolUseFormat\` setting.
 5. After each tool use, the user will respond with the result of that tool use. This result will provide you with the necessary information to continue your task or make further decisions. This response may include:
   - Information about whether the tool succeeded or failed, along with any reasons for failure.
   - Linter errors that may have arisen due to the changes you made, which you'll need to address.
@@ -1499,7 +1505,9 @@ You have access to a set of tools that are executed upon the user's approval. Yo
 
 # Tool Use Formatting
 
-Tool uses are formatted using XML-style tags. The tool name itself becomes the XML tag name. Each parameter is enclosed within its own set of tags. Here's the structure:
+When the underlying model supports function calling, Roo Code automatically formats tool uses as JSON function calls. If function calling isn't available, it falls back to XML-style tags instead. You can force the XML format via the \`roo-cline.toolUseFormat\` setting.
+
+Tool uses formatted as XML look like this:
 
 <actual_tool_name>
 <parameter1_name>value1</parameter1_name>
@@ -1921,7 +1929,7 @@ Example:
 1. In <thinking> tags, assess what information you already have and what information you need to proceed with the task.
 2. Choose the most appropriate tool based on the task and the tool descriptions provided. Assess if you need additional information to proceed, and which of the available tools would be most effective for gathering this information. For example using the list_files tool is more effective than running a command like \`ls\` in the terminal. It's critical that you think about each available tool and use the one that best fits the current step in the task.
 3. If multiple actions are needed, use one tool at a time per message to accomplish the task iteratively, with each tool use being informed by the result of the previous tool use. Do not assume the outcome of any tool use. Each step must be informed by the previous step's result.
-4. Formulate your tool use using the XML format specified for each tool.
+4. Tool calls are sent as JSON function calls when the model supports them, otherwise they fall back to the XML format shown above. You can force XML tags via the \`roo-cline.toolUseFormat\` setting.
 5. After each tool use, the user will respond with the result of that tool use. This result will provide you with the necessary information to continue your task or make further decisions. This response may include:
   - Information about whether the tool succeeded or failed, along with any reasons for failure.
   - Linter errors that may have arisen due to the changes you made, which you'll need to address.
@@ -2049,7 +2057,9 @@ You have access to a set of tools that are executed upon the user's approval. Yo
 
 # Tool Use Formatting
 
-Tool uses are formatted using XML-style tags. The tool name itself becomes the XML tag name. Each parameter is enclosed within its own set of tags. Here's the structure:
+When the underlying model supports function calling, Roo Code automatically formats tool uses as JSON function calls. If function calling isn't available, it falls back to XML-style tags instead. You can force the XML format via the \`roo-cline.toolUseFormat\` setting.
+
+Tool uses formatted as XML look like this:
 
 <actual_tool_name>
 <parameter1_name>value1</parameter1_name>
@@ -2467,7 +2477,7 @@ Example:
 1. In <thinking> tags, assess what information you already have and what information you need to proceed with the task.
 2. Choose the most appropriate tool based on the task and the tool descriptions provided. Assess if you need additional information to proceed, and which of the available tools would be most effective for gathering this information. For example using the list_files tool is more effective than running a command like \`ls\` in the terminal. It's critical that you think about each available tool and use the one that best fits the current step in the task.
 3. If multiple actions are needed, use one tool at a time per message to accomplish the task iteratively, with each tool use being informed by the result of the previous tool use. Do not assume the outcome of any tool use. Each step must be informed by the previous step's result.
-4. Formulate your tool use using the XML format specified for each tool.
+4. Tool calls are sent as JSON function calls when the model supports them, otherwise they fall back to the XML format shown above. You can force XML tags via the \`roo-cline.toolUseFormat\` setting.
 5. After each tool use, the user will respond with the result of that tool use. This result will provide you with the necessary information to continue your task or make further decisions. This response may include:
   - Information about whether the tool succeeded or failed, along with any reasons for failure.
   - Linter errors that may have arisen due to the changes you made, which you'll need to address.
@@ -2611,7 +2621,9 @@ You have access to a set of tools that are executed upon the user's approval. Yo
 
 # Tool Use Formatting
 
-Tool uses are formatted using XML-style tags. The tool name itself becomes the XML tag name. Each parameter is enclosed within its own set of tags. Here's the structure:
+When the underlying model supports function calling, Roo Code automatically formats tool uses as JSON function calls. If function calling isn't available, it falls back to XML-style tags instead. You can force the XML format via the \`roo-cline.toolUseFormat\` setting.
+
+Tool uses formatted as XML look like this:
 
 <actual_tool_name>
 <parameter1_name>value1</parameter1_name>
@@ -3033,7 +3045,7 @@ Example:
 1. In <thinking> tags, assess what information you already have and what information you need to proceed with the task.
 2. Choose the most appropriate tool based on the task and the tool descriptions provided. Assess if you need additional information to proceed, and which of the available tools would be most effective for gathering this information. For example using the list_files tool is more effective than running a command like \`ls\` in the terminal. It's critical that you think about each available tool and use the one that best fits the current step in the task.
 3. If multiple actions are needed, use one tool at a time per message to accomplish the task iteratively, with each tool use being informed by the result of the previous tool use. Do not assume the outcome of any tool use. Each step must be informed by the previous step's result.
-4. Formulate your tool use using the XML format specified for each tool.
+4. Tool calls are sent as JSON function calls when the model supports them, otherwise they fall back to the XML format shown above. You can force XML tags via the \`roo-cline.toolUseFormat\` setting.
 5. After each tool use, the user will respond with the result of that tool use. This result will provide you with the necessary information to continue your task or make further decisions. This response may include:
   - Information about whether the tool succeeded or failed, along with any reasons for failure.
   - Linter errors that may have arisen due to the changes you made, which you'll need to address.
@@ -3161,7 +3173,9 @@ You have access to a set of tools that are executed upon the user's approval. Yo
 
 # Tool Use Formatting
 
-Tool uses are formatted using XML-style tags. The tool name itself becomes the XML tag name. Each parameter is enclosed within its own set of tags. Here's the structure:
+When the underlying model supports function calling, Roo Code automatically formats tool uses as JSON function calls. If function calling isn't available, it falls back to XML-style tags instead. You can force the XML format via the \`roo-cline.toolUseFormat\` setting.
+
+Tool uses formatted as XML look like this:
 
 <actual_tool_name>
 <parameter1_name>value1</parameter1_name>
@@ -3618,7 +3632,7 @@ Example:
 1. In <thinking> tags, assess what information you already have and what information you need to proceed with the task.
 2. Choose the most appropriate tool based on the task and the tool descriptions provided. Assess if you need additional information to proceed, and which of the available tools would be most effective for gathering this information. For example using the list_files tool is more effective than running a command like \`ls\` in the terminal. It's critical that you think about each available tool and use the one that best fits the current step in the task.
 3. If multiple actions are needed, use one tool at a time per message to accomplish the task iteratively, with each tool use being informed by the result of the previous tool use. Do not assume the outcome of any tool use. Each step must be informed by the previous step's result.
-4. Formulate your tool use using the XML format specified for each tool.
+4. Tool calls are sent as JSON function calls when the model supports them, otherwise they fall back to the XML format shown above. You can force XML tags via the \`roo-cline.toolUseFormat\` setting.
 5. After each tool use, the user will respond with the result of that tool use. This result will provide you with the necessary information to continue your task or make further decisions. This response may include:
   - Information about whether the tool succeeded or failed, along with any reasons for failure.
   - Linter errors that may have arisen due to the changes you made, which you'll need to address.
@@ -3743,7 +3757,9 @@ You have access to a set of tools that are executed upon the user's approval. Yo
 
 # Tool Use Formatting
 
-Tool uses are formatted using XML-style tags. The tool name itself becomes the XML tag name. Each parameter is enclosed within its own set of tags. Here's the structure:
+When the underlying model supports function calling, Roo Code automatically formats tool uses as JSON function calls. If function calling isn't available, it falls back to XML-style tags instead. You can force the XML format via the \`roo-cline.toolUseFormat\` setting.
+
+Tool uses formatted as XML look like this:
 
 <actual_tool_name>
 <parameter1_name>value1</parameter1_name>
@@ -4112,7 +4128,7 @@ Example:
 1. In <thinking> tags, assess what information you already have and what information you need to proceed with the task.
 2. Choose the most appropriate tool based on the task and the tool descriptions provided. Assess if you need additional information to proceed, and which of the available tools would be most effective for gathering this information. For example using the list_files tool is more effective than running a command like \`ls\` in the terminal. It's critical that you think about each available tool and use the one that best fits the current step in the task.
 3. If multiple actions are needed, use one tool at a time per message to accomplish the task iteratively, with each tool use being informed by the result of the previous tool use. Do not assume the outcome of any tool use. Each step must be informed by the previous step's result.
-4. Formulate your tool use using the XML format specified for each tool.
+4. Tool calls are sent as JSON function calls when the model supports them, otherwise they fall back to the XML format shown above. You can force XML tags via the \`roo-cline.toolUseFormat\` setting.
 5. After each tool use, the user will respond with the result of that tool use. This result will provide you with the necessary information to continue your task or make further decisions. This response may include:
   - Information about whether the tool succeeded or failed, along with any reasons for failure.
   - Linter errors that may have arisen due to the changes you made, which you'll need to address.
@@ -4279,7 +4295,9 @@ You have access to a set of tools that are executed upon the user's approval. Yo
 
 # Tool Use Formatting
 
-Tool uses are formatted using XML-style tags. The tool name itself becomes the XML tag name. Each parameter is enclosed within its own set of tags. Here's the structure:
+When the underlying model supports function calling, Roo Code automatically formats tool uses as JSON function calls. If function calling isn't available, it falls back to XML-style tags instead. You can force the XML format via the \`roo-cline.toolUseFormat\` setting.
+
+Tool uses formatted as XML look like this:
 
 <actual_tool_name>
 <parameter1_name>value1</parameter1_name>
@@ -4697,7 +4715,7 @@ Example:
 1. In <thinking> tags, assess what information you already have and what information you need to proceed with the task.
 2. Choose the most appropriate tool based on the task and the tool descriptions provided. Assess if you need additional information to proceed, and which of the available tools would be most effective for gathering this information. For example using the list_files tool is more effective than running a command like \`ls\` in the terminal. It's critical that you think about each available tool and use the one that best fits the current step in the task.
 3. If multiple actions are needed, use one tool at a time per message to accomplish the task iteratively, with each tool use being informed by the result of the previous tool use. Do not assume the outcome of any tool use. Each step must be informed by the previous step's result.
-4. Formulate your tool use using the XML format specified for each tool.
+4. Tool calls are sent as JSON function calls when the model supports them, otherwise they fall back to the XML format shown above. You can force XML tags via the \`roo-cline.toolUseFormat\` setting.
 5. After each tool use, the user will respond with the result of that tool use. This result will provide you with the necessary information to continue your task or make further decisions. This response may include:
   - Information about whether the tool succeeded or failed, along with any reasons for failure.
   - Linter errors that may have arisen due to the changes you made, which you'll need to address.
@@ -4850,7 +4868,9 @@ You have access to a set of tools that are executed upon the user's approval. Yo
 
 # Tool Use Formatting
 
-Tool uses are formatted using XML-style tags. The tool name itself becomes the XML tag name. Each parameter is enclosed within its own set of tags. Here's the structure:
+When the underlying model supports function calling, Roo Code automatically formats tool uses as JSON function calls. If function calling isn't available, it falls back to XML-style tags instead. You can force the XML format via the \`roo-cline.toolUseFormat\` setting.
+
+Tool uses formatted as XML look like this:
 
 <actual_tool_name>
 <parameter1_name>value1</parameter1_name>
@@ -5197,7 +5217,7 @@ Example:
 1. In <thinking> tags, assess what information you already have and what information you need to proceed with the task.
 2. Choose the most appropriate tool based on the task and the tool descriptions provided. Assess if you need additional information to proceed, and which of the available tools would be most effective for gathering this information. For example using the list_files tool is more effective than running a command like \`ls\` in the terminal. It's critical that you think about each available tool and use the one that best fits the current step in the task.
 3. If multiple actions are needed, use one tool at a time per message to accomplish the task iteratively, with each tool use being informed by the result of the previous tool use. Do not assume the outcome of any tool use. Each step must be informed by the previous step's result.
-4. Formulate your tool use using the XML format specified for each tool.
+4. Tool calls are sent as JSON function calls when the model supports them, otherwise they fall back to the XML format shown above. You can force XML tags via the \`roo-cline.toolUseFormat\` setting.
 5. After each tool use, the user will respond with the result of that tool use. This result will provide you with the necessary information to continue your task or make further decisions. This response may include:
   - Information about whether the tool succeeded or failed, along with any reasons for failure.
   - Linter errors that may have arisen due to the changes you made, which you'll need to address.
@@ -5335,7 +5355,9 @@ You have access to a set of tools that are executed upon the user's approval. Yo
 
 # Tool Use Formatting
 
-Tool uses are formatted using XML-style tags. The tool name itself becomes the XML tag name. Each parameter is enclosed within its own set of tags. Here's the structure:
+When the underlying model supports function calling, Roo Code automatically formats tool uses as JSON function calls. If function calling isn't available, it falls back to XML-style tags instead. You can force the XML format via the \`roo-cline.toolUseFormat\` setting.
+
+Tool uses formatted as XML look like this:
 
 <actual_tool_name>
 <parameter1_name>value1</parameter1_name>
@@ -5579,7 +5601,7 @@ Example:
 1. In <thinking> tags, assess what information you already have and what information you need to proceed with the task.
 2. Choose the most appropriate tool based on the task and the tool descriptions provided. Assess if you need additional information to proceed, and which of the available tools would be most effective for gathering this information. For example using the list_files tool is more effective than running a command like \`ls\` in the terminal. It's critical that you think about each available tool and use the one that best fits the current step in the task.
 3. If multiple actions are needed, use one tool at a time per message to accomplish the task iteratively, with each tool use being informed by the result of the previous tool use. Do not assume the outcome of any tool use. Each step must be informed by the previous step's result.
-4. Formulate your tool use using the XML format specified for each tool.
+4. Tool calls are sent as JSON function calls when the model supports them, otherwise they fall back to the XML format shown above. You can force XML tags via the \`roo-cline.toolUseFormat\` setting.
 5. After each tool use, the user will respond with the result of that tool use. This result will provide you with the necessary information to continue your task or make further decisions. This response may include:
   - Information about whether the tool succeeded or failed, along with any reasons for failure.
   - Linter errors that may have arisen due to the changes you made, which you'll need to address.
@@ -5737,7 +5759,9 @@ You have access to a set of tools that are executed upon the user's approval. Yo
 
 # Tool Use Formatting
 
-Tool uses are formatted using XML-style tags. The tool name itself becomes the XML tag name. Each parameter is enclosed within its own set of tags. Here's the structure:
+When the underlying model supports function calling, Roo Code automatically formats tool uses as JSON function calls. If function calling isn't available, it falls back to XML-style tags instead. You can force the XML format via the \`roo-cline.toolUseFormat\` setting.
+
+Tool uses formatted as XML look like this:
 
 <actual_tool_name>
 <parameter1_name>value1</parameter1_name>
@@ -6155,7 +6179,7 @@ Example:
 1. In <thinking> tags, assess what information you already have and what information you need to proceed with the task.
 2. Choose the most appropriate tool based on the task and the tool descriptions provided. Assess if you need additional information to proceed, and which of the available tools would be most effective for gathering this information. For example using the list_files tool is more effective than running a command like \`ls\` in the terminal. It's critical that you think about each available tool and use the one that best fits the current step in the task.
 3. If multiple actions are needed, use one tool at a time per message to accomplish the task iteratively, with each tool use being informed by the result of the previous tool use. Do not assume the outcome of any tool use. Each step must be informed by the previous step's result.
-4. Formulate your tool use using the XML format specified for each tool.
+4. Tool calls are sent as JSON function calls when the model supports them, otherwise they fall back to the XML format shown above. You can force XML tags via the \`roo-cline.toolUseFormat\` setting.
 5. After each tool use, the user will respond with the result of that tool use. This result will provide you with the necessary information to continue your task or make further decisions. This response may include:
   - Information about whether the tool succeeded or failed, along with any reasons for failure.
   - Linter errors that may have arisen due to the changes you made, which you'll need to address.
@@ -6317,7 +6341,9 @@ You have access to a set of tools that are executed upon the user's approval. Yo
 
 # Tool Use Formatting
 
-Tool uses are formatted using XML-style tags. The tool name itself becomes the XML tag name. Each parameter is enclosed within its own set of tags. Here's the structure:
+When the underlying model supports function calling, Roo Code automatically formats tool uses as JSON function calls. If function calling isn't available, it falls back to XML-style tags instead. You can force the XML format via the \`roo-cline.toolUseFormat\` setting.
+
+Tool uses formatted as XML look like this:
 
 <actual_tool_name>
 <parameter1_name>value1</parameter1_name>
@@ -6691,7 +6717,7 @@ Example:
 1. In <thinking> tags, assess what information you already have and what information you need to proceed with the task.
 2. Choose the most appropriate tool based on the task and the tool descriptions provided. Assess if you need additional information to proceed, and which of the available tools would be most effective for gathering this information. For example using the list_files tool is more effective than running a command like \`ls\` in the terminal. It's critical that you think about each available tool and use the one that best fits the current step in the task.
 3. If multiple actions are needed, use one tool at a time per message to accomplish the task iteratively, with each tool use being informed by the result of the previous tool use. Do not assume the outcome of any tool use. Each step must be informed by the previous step's result.
-4. Formulate your tool use using the XML format specified for each tool.
+4. Tool calls are sent as JSON function calls when the model supports them, otherwise they fall back to the XML format shown above. You can force XML tags via the \`roo-cline.toolUseFormat\` setting.
 5. After each tool use, the user will respond with the result of that tool use. This result will provide you with the necessary information to continue your task or make further decisions. This response may include:
   - Information about whether the tool succeeded or failed, along with any reasons for failure.
   - Linter errors that may have arisen due to the changes you made, which you'll need to address.
