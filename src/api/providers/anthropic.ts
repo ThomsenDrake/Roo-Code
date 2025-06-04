@@ -199,12 +199,12 @@ export class AnthropicHandler extends BaseProvider implements SingleCompletionHa
 					}
 					break
 				case "content_block_delta":
-					switch (chunk.delta.type) {
+					switch ((chunk.delta as any).type) {
 						case "thinking_delta":
-							yield { type: "reasoning", text: chunk.delta.thinking }
+							yield { type: "reasoning", text: (chunk.delta as any).thinking }
 							break
 						case "text_delta":
-							yield { type: "text", text: chunk.delta.text }
+							yield { type: "text", text: (chunk.delta as any).text }
 							break
 						case "tool_use_delta":
 							yield {
