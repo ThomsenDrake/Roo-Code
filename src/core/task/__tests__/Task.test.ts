@@ -889,7 +889,7 @@ describe("Cline", () => {
 			await cline.recursivelyMakeClineRequests([{ type: "text", text: "test" }])
 
 			expect(readFileSpy).toHaveBeenCalled()
-			const callArgs = readFileSpy.mock.calls[0][1]
+			const callArgs = readFileSpy.mock.calls[0][1] as { params: { path: string } }
 			expect(callArgs.params.path).toBe("src/file.ts")
 		})
 	})
