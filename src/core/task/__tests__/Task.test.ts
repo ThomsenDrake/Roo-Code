@@ -856,4 +856,41 @@ describe("Cline", () => {
 			})
 		})
 	})
+
+	describe("function_call integration", () => {
+		it("executes matching tool handler from JSON function_call", async () => {
+			const { parseAssistantMessageV2 } = require("../../assistant-message/parseAssistantMessageV2")
+			const readFileModule = require("../../tools/readFileTool")
+			const readFileSpy = jest.spyOn(readFileModule, "readFileTool").mockResolvedValue(undefined)
+			jest.spyOn(require("../../assistant-message"), "parseAssistantMessage").mockImplementation(
+				parseAssistantMessageV2,
+			)
+
+			const [cline, task] = Task.create({
+				provider: mockProvider,
+				apiConfiguration: mockApiConfig,
+				task: "test task",
+			})
+			cline.abandoned = true
+			await task
+
+			const json = JSON.stringify({
+				function_call: {
+					name: "read_file",
+					arguments: JSON.stringify({ path: "src/file.ts" }),
+				},
+			})
+
+			const mockStream = (async function* () {
+				yield { type: "text", text: json } as ApiStreamChunk
+			})()
+			jest.spyOn(cline.api, "createMessage").mockReturnValue(mockStream)
+
+			await cline.recursivelyMakeClineRequests([{ type: "text", text: "test" }])
+
+			expect(readFileSpy).toHaveBeenCalled()
+			const callArgs = readFileSpy.mock.calls[0][1]
+			expect(callArgs.params.path).toBe("src/file.ts")
+		})
+	})
 })

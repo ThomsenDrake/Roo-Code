@@ -40,6 +40,43 @@ export type AssistantMessageContent = TextContent | ToolUse
 export function parseAssistantMessageV2(assistantMessage: string): AssistantMessageContent[] {
 	const contentBlocks: AssistantMessageContent[] = []
 
+	const trimmed = assistantMessage.trim()
+	if (trimmed.startsWith("{")) {
+		try {
+			const parsed = JSON.parse(trimmed)
+			if (parsed && typeof parsed === "object" && "function_call" in parsed) {
+				const { function_call, content } = parsed as any
+				const name = function_call?.name as ToolName
+
+				let argsObj: Record<string, any> = {}
+				if (function_call?.arguments) {
+					try {
+						argsObj =
+							typeof function_call.arguments === "string"
+								? JSON.parse(function_call.arguments)
+								: function_call.arguments
+					} catch {
+						argsObj = {}
+					}
+				}
+
+				const params: Partial<Record<ToolParamName, string>> = {}
+				for (const [k, v] of Object.entries(argsObj)) {
+					params[k as ToolParamName] = String(v)
+				}
+
+				if (typeof content === "string" && content.trim().length > 0) {
+					contentBlocks.push({ type: "text", content: content.trim(), partial: false })
+				}
+
+				contentBlocks.push({ type: "tool_use", name, params, partial: false })
+				return contentBlocks
+			}
+		} catch {
+			// fall through to XML parsing
+		}
+	}
+
 	let currentTextContentStart = 0 // Index where the current text block started.
 	let currentTextContent: TextContent | undefined = undefined
 	let currentToolUseStart = 0 // Index *after* the opening tag of the current tool use.
