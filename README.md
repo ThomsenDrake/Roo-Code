@@ -101,7 +101,7 @@ Roo Code automatically uses JSON function calls for tool execution when the unde
 
 ### Native Tool Calls
 
-OpenAI's standard endpoint (internally called `openai-native`), Azure OpenAI, and Anthropic models always rely on native tool calling. Select **OpenAI** under **API Provider** in **Settings** to use this endpoint. Because it enforces native tool calls, you won't see an **Enable native tool calls** checkbox. For other providers, native tool calls can be toggled in the settings UI.
+OpenAI's standard endpoint, Azure OpenAI, and Anthropic models always rely on native tool calling. Because it enforces native tool calls, you won't see an **Enable native tool calls** checkbox. For other providers, native tool calls can be toggled in the settings UI.
 
 ### Customization
 
