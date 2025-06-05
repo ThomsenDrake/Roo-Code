@@ -42,6 +42,7 @@ export function parseAssistantMessageV2(
 	useNativeToolCalls = false,
 ): AssistantMessageContent[] {
 	const contentBlocks: AssistantMessageContent[] = []
+	let parsedJson = false
 
 	if (useNativeToolCalls) {
 		try {
@@ -56,6 +57,7 @@ export function parseAssistantMessageV2(
 					params,
 					partial: false,
 				})
+				parsedJson = true
 				return contentBlocks
 			}
 
@@ -75,15 +77,25 @@ export function parseAssistantMessageV2(
 				}
 
 				if (contentBlocks.length > 0) {
+					parsedJson = true
 					return contentBlocks
 				}
+			} else if (message.type === "tool_use") {
+				contentBlocks.push({
+					type: "tool_use",
+					name: message.name,
+					params: message.input ?? {},
+					partial: false,
+				})
+				parsedJson = true
+				return contentBlocks
 			}
 		} catch {
 			// Ignore JSON parse errors and fallback to XML parsing below
 		}
 	}
 
-	if (!useNativeToolCalls) {
+	if (!useNativeToolCalls || !parsedJson) {
 		let currentTextContentStart = 0 // Index where the current text block started.
 		let currentTextContent: TextContent | undefined = undefined
 		let currentToolUseStart = 0 // Index *after* the opening tag of the current tool use.

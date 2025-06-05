@@ -895,5 +895,57 @@ describe("Cline", () => {
 			const callArgs = readFileSpy.mock.calls[0][1] as { params: { path: string } }
 			expect(callArgs.params.path).toBe("src/file.ts")
 		})
+
+		it("executes multiple tool handlers from JSON tool_calls", async () => {
+			const { parseAssistantMessageV2 } = require("../../assistant-message/parseAssistantMessageV2")
+			const readFileModule = require("../../tools/readFileTool")
+			const execCommandModule = require("../../tools/executeCommandTool")
+			const readFileSpy = jest.spyOn(readFileModule, "readFileTool").mockResolvedValue(undefined)
+			const execSpy = jest.spyOn(execCommandModule, "executeCommandTool").mockResolvedValue(undefined)
+			jest.spyOn(require("../../assistant-message"), "parseAssistantMessage").mockImplementation(
+				(...args: unknown[]) => {
+					const msg = args[0] as string
+					return parseAssistantMessageV2(msg, true)
+				},
+			)
+
+			const [cline, task] = Task.create({
+				provider: mockProvider,
+				apiConfiguration: mockApiConfig,
+				task: "test task",
+			})
+			cline.abandoned = true
+			await task
+
+			const json = JSON.stringify({
+				tool_calls: [
+					{
+						id: "1",
+						function: {
+							name: "read_file",
+							arguments: JSON.stringify({ path: "src/file.ts" }),
+						},
+					},
+					{
+						id: "2",
+						function: {
+							name: "execute_command",
+							arguments: JSON.stringify({ command: "ls" }),
+						},
+					},
+				],
+			})
+
+			const mockStream = (async function* () {
+				yield { type: "text", text: json } as ApiStreamChunk
+			})()
+			jest.spyOn(cline.api, "createMessage").mockReturnValue(mockStream)
+
+			await cline.recursivelyMakeClineRequests([{ type: "text", text: "test" }])
+
+			expect(readFileSpy).toHaveBeenCalled()
+			// Only the first tool call should execute
+			expect(execSpy).not.toHaveBeenCalled()
+		})
 	})
 })
