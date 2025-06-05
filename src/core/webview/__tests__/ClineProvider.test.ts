@@ -1822,6 +1822,64 @@ describe("ClineProvider", () => {
 				{ name: "test-config", id: "test-id", apiProvider: "anthropic" },
 			])
 		})
+
+		test("buildApiHandler receives useNativeToolCalls true for anthropic", async () => {
+			await provider.resolveWebviewView(mockWebviewView)
+			const messageHandler = (mockWebviewView.webview.onDidReceiveMessage as jest.Mock).mock.calls[0][0]
+
+			;(provider as any).providerSettingsManager = {
+				setModeConfig: jest.fn(),
+				saveConfig: jest.fn().mockResolvedValue(undefined),
+				listConfig: jest
+					.fn()
+					.mockResolvedValue([{ name: "test-config", id: "test-id", apiProvider: "anthropic" }]),
+			} as any
+
+			jest.spyOn(provider, "getState").mockResolvedValue({ mode: "code" } as any)
+
+			const { buildApiHandler } = require("../../../api")
+			const buildApiHandlerMock = buildApiHandler as jest.Mock
+
+			const mockCline = new Task(defaultTaskOptions)
+			await provider.addClineToStack(mockCline)
+
+			await messageHandler({
+				type: "upsertApiConfiguration",
+				text: "test-config",
+				apiConfiguration: { apiProvider: "anthropic", apiKey: "test" },
+			})
+
+			expect(buildApiHandlerMock).toHaveBeenCalledWith(expect.objectContaining({ useNativeToolCalls: true }))
+		})
+
+		test("buildApiHandler receives useNativeToolCalls true for openai", async () => {
+			await provider.resolveWebviewView(mockWebviewView)
+			const messageHandler = (mockWebviewView.webview.onDidReceiveMessage as jest.Mock).mock.calls[0][0]
+
+			;(provider as any).providerSettingsManager = {
+				setModeConfig: jest.fn(),
+				saveConfig: jest.fn().mockResolvedValue(undefined),
+				listConfig: jest
+					.fn()
+					.mockResolvedValue([{ name: "test-config", id: "test-id", apiProvider: "openai" }]),
+			} as any
+
+			jest.spyOn(provider, "getState").mockResolvedValue({ mode: "code" } as any)
+
+			const { buildApiHandler } = require("../../../api")
+			const buildApiHandlerMock = buildApiHandler as jest.Mock
+
+			const mockCline = new Task(defaultTaskOptions)
+			await provider.addClineToStack(mockCline)
+
+			await messageHandler({
+				type: "upsertApiConfiguration",
+				text: "test-config",
+				apiConfiguration: { apiProvider: "openai", openAiApiKey: "test" },
+			})
+
+			expect(buildApiHandlerMock).toHaveBeenCalledWith(expect.objectContaining({ useNativeToolCalls: true }))
+		})
 	})
 
 	describe("browser connection features", () => {

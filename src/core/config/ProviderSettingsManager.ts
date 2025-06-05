@@ -26,6 +26,7 @@ export const providerProfilesSchema = z.object({
 			rateLimitSecondsMigrated: z.boolean().optional(),
 			diffSettingsMigrated: z.boolean().optional(),
 			openAiHeadersMigrated: z.boolean().optional(),
+			nativeToolCallsMigrated: z.boolean().optional(),
 		})
 		.optional(),
 })
@@ -48,6 +49,7 @@ export class ProviderSettingsManager {
 			rateLimitSecondsMigrated: true, // Mark as migrated on fresh installs
 			diffSettingsMigrated: true, // Mark as migrated on fresh installs
 			openAiHeadersMigrated: true, // Mark as migrated on fresh installs
+			nativeToolCallsMigrated: true, // Mark as migrated on fresh installs
 		},
 	}
 
@@ -113,6 +115,7 @@ export class ProviderSettingsManager {
 						rateLimitSecondsMigrated: false,
 						diffSettingsMigrated: false,
 						openAiHeadersMigrated: false,
+						nativeToolCallsMigrated: false,
 					} // Initialize with default values
 					isDirty = true
 				}
@@ -132,6 +135,12 @@ export class ProviderSettingsManager {
 				if (!providerProfiles.migrations.openAiHeadersMigrated) {
 					await this.migrateOpenAiHeaders(providerProfiles)
 					providerProfiles.migrations.openAiHeadersMigrated = true
+					isDirty = true
+				}
+
+				if (!providerProfiles.migrations.nativeToolCallsMigrated) {
+					await this.migrateNativeToolCalls(providerProfiles)
+					providerProfiles.migrations.nativeToolCallsMigrated = true
 					isDirty = true
 				}
 
@@ -228,6 +237,24 @@ export class ProviderSettingsManager {
 		}
 	}
 
+	private async migrateNativeToolCalls(providerProfiles: ProviderProfiles) {
+		try {
+			for (const [_name, apiConfig] of Object.entries(providerProfiles.apiConfigs)) {
+				const providerSupportsNative =
+					apiConfig.apiProvider === "openai" ||
+					apiConfig.apiProvider === "openai-native" ||
+					apiConfig.apiProvider === "anthropic" ||
+					(apiConfig as any).openAiUseAzure
+
+				if (apiConfig.useNativeToolCalls === undefined && providerSupportsNative) {
+					apiConfig.useNativeToolCalls = true
+				}
+			}
+		} catch (error) {
+			console.error(`[MigrateNativeToolCalls] Failed to migrate native tool call settings:`, error)
+		}
+	}
+
 	/**
 	 * List all available configs with metadata.
 	 */
@@ -262,6 +289,17 @@ export class ProviderSettingsManager {
 
 				// Filter out settings from other providers.
 				const filteredConfig = providerSettingsSchemaDiscriminated.parse(config)
+
+				const providerSupportsNative =
+					filteredConfig.apiProvider === "openai" ||
+					filteredConfig.apiProvider === "openai-native" ||
+					filteredConfig.apiProvider === "anthropic" ||
+					(filteredConfig as any).openAiUseAzure
+
+				if (filteredConfig.useNativeToolCalls === undefined && providerSupportsNative) {
+					filteredConfig.useNativeToolCalls = true
+				}
+
 				providerProfiles.apiConfigs[name] = { ...filteredConfig, id }
 				await this.store(providerProfiles)
 				return id

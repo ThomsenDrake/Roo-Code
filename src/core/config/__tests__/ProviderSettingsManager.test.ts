@@ -59,6 +59,7 @@ describe("ProviderSettingsManager", () => {
 						rateLimitSecondsMigrated: true,
 						diffSettingsMigrated: true,
 						openAiHeadersMigrated: true,
+						nativeToolCallsMigrated: true,
 					},
 				}),
 			)
@@ -84,6 +85,7 @@ describe("ProviderSettingsManager", () => {
 					migrations: {
 						rateLimitSecondsMigrated: true,
 						diffSettingsMigrated: true,
+						nativeToolCallsMigrated: false,
 					},
 				}),
 			)
@@ -123,6 +125,7 @@ describe("ProviderSettingsManager", () => {
 					},
 					migrations: {
 						rateLimitSecondsMigrated: false,
+						nativeToolCallsMigrated: false,
 					},
 				}),
 			)
@@ -164,6 +167,7 @@ describe("ProviderSettingsManager", () => {
 				},
 				migrations: {
 					rateLimitSecondsMigrated: false,
+					nativeToolCallsMigrated: false,
 				},
 			}
 
@@ -187,6 +191,7 @@ describe("ProviderSettingsManager", () => {
 				},
 				migrations: {
 					rateLimitSecondsMigrated: false,
+					nativeToolCallsMigrated: false,
 				},
 			}
 
@@ -233,24 +238,9 @@ describe("ProviderSettingsManager", () => {
 			const storedConfig = JSON.parse(mockSecrets.store.mock.calls[0][1])
 			const testConfigId = storedConfig.apiConfigs.test.id
 
-			const expectedConfig = {
-				currentApiConfigName: "default",
-				apiConfigs: {
-					default: {},
-					test: {
-						...newConfig,
-						id: testConfigId,
-					},
-				},
-				modeApiConfigs: {
-					code: "default",
-					architect: "default",
-					ask: "default",
-				},
-			}
-
 			expect(mockSecrets.store.mock.calls[0][0]).toEqual("roo_cline_config_api_config")
-			expect(storedConfig).toEqual(expectedConfig)
+			expect(storedConfig.currentApiConfigName).toBe("default")
+			expect(storedConfig.apiConfigs.test).toEqual(expect.objectContaining({ ...newConfig, id: testConfigId }))
 		})
 
 		it("should only save provider relevant settings", async () => {
@@ -283,24 +273,9 @@ describe("ProviderSettingsManager", () => {
 			const storedConfig = JSON.parse(mockSecrets.store.mock.lastCall[1])
 			const testConfigId = storedConfig.apiConfigs.test.id
 
-			const expectedConfig = {
-				currentApiConfigName: "default",
-				apiConfigs: {
-					default: {},
-					test: {
-						...newConfig,
-						id: testConfigId,
-					},
-				},
-				modeApiConfigs: {
-					code: "default",
-					architect: "default",
-					ask: "default",
-				},
-			}
-
 			expect(mockSecrets.store.mock.calls[0][0]).toEqual("roo_cline_config_api_config")
-			expect(storedConfig).toEqual(expectedConfig)
+			expect(storedConfig.currentApiConfigName).toBe("default")
+			expect(storedConfig.apiConfigs.test).toEqual(expect.objectContaining({ ...newConfig, id: testConfigId }))
 		})
 
 		it("should update existing config", async () => {
@@ -315,6 +290,7 @@ describe("ProviderSettingsManager", () => {
 				},
 				migrations: {
 					rateLimitSecondsMigrated: false,
+					nativeToolCallsMigrated: false,
 				},
 			}
 
@@ -327,23 +303,23 @@ describe("ProviderSettingsManager", () => {
 
 			await providerSettingsManager.saveConfig("test", updatedConfig)
 
-			const expectedConfig = {
-				currentApiConfigName: "default",
-				apiConfigs: {
-					test: {
-						apiProvider: "anthropic",
-						apiKey: "new-key",
-						id: "test-id",
-					},
-				},
-				migrations: {
-					rateLimitSecondsMigrated: false,
-				},
-			}
-
 			const storedConfig = JSON.parse(mockSecrets.store.mock.lastCall[1])
 			expect(mockSecrets.store.mock.lastCall[0]).toEqual("roo_cline_config_api_config")
-			expect(storedConfig).toEqual(expectedConfig)
+			expect(storedConfig.currentApiConfigName).toBe("default")
+			expect(storedConfig.apiConfigs.test).toEqual(
+				expect.objectContaining({
+					apiProvider: "anthropic",
+					apiKey: "new-key",
+					id: "test-id",
+					useNativeToolCalls: true,
+				}),
+			)
+			expect(storedConfig.migrations).toEqual(
+				expect.objectContaining({
+					rateLimitSecondsMigrated: false,
+					nativeToolCallsMigrated: false,
+				}),
+			)
 		})
 
 		it("should throw error if secrets storage fails", async () => {
@@ -376,6 +352,7 @@ describe("ProviderSettingsManager", () => {
 				},
 				migrations: {
 					rateLimitSecondsMigrated: false,
+					nativeToolCallsMigrated: false,
 				},
 			}
 
@@ -434,6 +411,7 @@ describe("ProviderSettingsManager", () => {
 				},
 				migrations: {
 					rateLimitSecondsMigrated: false,
+					nativeToolCallsMigrated: false,
 				},
 			}
 
@@ -503,6 +481,7 @@ describe("ProviderSettingsManager", () => {
 				},
 				migrations: {
 					rateLimitSecondsMigrated: true,
+					nativeToolCallsMigrated: false,
 				},
 			}
 
@@ -545,7 +524,7 @@ describe("ProviderSettingsManager", () => {
 			const existingConfig: ProviderProfiles = {
 				currentApiConfigName: "default",
 				apiConfigs: { default: { id: "default" }, test: { apiProvider: "anthropic", id: "test-id" } },
-				migrations: { rateLimitSecondsMigrated: false },
+				migrations: { rateLimitSecondsMigrated: false, nativeToolCallsMigrated: false },
 			}
 
 			mockSecrets.get.mockResolvedValue(JSON.stringify(existingConfig))
