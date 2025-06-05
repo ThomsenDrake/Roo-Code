@@ -67,6 +67,7 @@ import { ToolRepetitionDetector } from "../tools/ToolRepetitionDetector"
 import { FileContextTracker } from "../context-tracking/FileContextTracker"
 import { RooIgnoreController } from "../ignore/RooIgnoreController"
 import { type AssistantMessageContent, parseAssistantMessage, presentAssistantMessage } from "../assistant-message"
+import { parseAssistantMessageV2 } from "../assistant-message/parseAssistantMessageV2"
 import { truncateConversationIfNeeded } from "../sliding-window"
 import { ClineProvider } from "../webview/ClineProvider"
 import { MultiSearchReplaceDiffStrategy } from "../diff/strategies/multi-search-replace"
@@ -1257,6 +1258,12 @@ export class Task extends EventEmitter<ClineEvents> {
 
 			await this.diffViewProvider.reset()
 
+			const state = await this.providerRef.deref()?.getState()
+			const providerSupportsNative = ["openai", "openai-native", "anthropic"].includes(
+				state?.apiConfiguration?.apiProvider || "",
+			)
+			const useNativeToolCalling = providerSupportsNative || (state?.useNativeToolCalls ?? false)
+
 			// Yields only if the first chunk is successful, otherwise will
 			// allow the user to retry the request (most likely due to rate
 			// limit error, which gets thrown on the first chunk).
@@ -1290,7 +1297,9 @@ export class Task extends EventEmitter<ClineEvents> {
 
 							// Parse raw assistant message into content blocks.
 							const prevLength = this.assistantMessageContent.length
-							this.assistantMessageContent = parseAssistantMessage(assistantMessage)
+							this.assistantMessageContent = useNativeToolCalling
+								? parseAssistantMessageV2(assistantMessage, true)
+								: parseAssistantMessage(assistantMessage)
 
 							if (this.assistantMessageContent.length > prevLength) {
 								// New content we need to present, reset to
@@ -1299,7 +1308,7 @@ export class Task extends EventEmitter<ClineEvents> {
 							}
 
 							// Present content to user.
-							presentAssistantMessage(this)
+							presentAssistantMessage(this, useNativeToolCalling)
 							break
 						}
 						case "tool_use": {
@@ -1417,7 +1426,7 @@ export class Task extends EventEmitter<ClineEvents> {
 				// `pWaitFor` before making the next request. All this is really
 				// doing is presenting the last partial message that we just set
 				// to complete.
-				presentAssistantMessage(this)
+				presentAssistantMessage(this, useNativeToolCalling)
 			}
 
 			updateApiReqMsg()

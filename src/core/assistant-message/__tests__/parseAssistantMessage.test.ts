@@ -370,3 +370,57 @@ describe("parseAssistantMessageV2 JSON function_call", () => {
 		expect(toolUse.params.end_line).toBe(10)
 	})
 })
+
+describe("parseAssistantMessageV2 JSON tool_calls", () => {
+	it("should parse OpenAI tool_calls array", () => {
+		const json = JSON.stringify({
+			tool_calls: [
+				{
+					id: "1",
+					function: {
+						name: "read_file",
+						arguments: JSON.stringify({ path: "src/file.ts" }),
+					},
+				},
+				{
+					id: "2",
+					function: {
+						name: "execute_command",
+						arguments: JSON.stringify({ command: "ls" }),
+					},
+				},
+			],
+		})
+		const result = parseAssistantMessageV2(json, true)
+		expect(result).toHaveLength(2)
+		expect((result[0] as ToolUse).name).toBe("read_file")
+		expect((result[0] as ToolUse).params.path).toBe("src/file.ts")
+		expect((result[1] as ToolUse).name).toBe("execute_command")
+		expect((result[1] as ToolUse).params.command).toBe("ls")
+	})
+
+	it("should fallback to XML parsing when JSON is not valid", () => {
+		const xml = "<read_file><path>src/file.ts</path></read_file>"
+		const result = parseAssistantMessageV2(xml, true)
+		expect(result).toHaveLength(1)
+		const toolUse = result[0] as ToolUse
+		expect(toolUse.name).toBe("read_file")
+		expect(toolUse.params.path).toBe("src/file.ts")
+	})
+})
+
+describe("parseAssistantMessageV2 Anthropic tool_use", () => {
+	it("should parse Anthropic style tool_use JSON", () => {
+		const json = JSON.stringify({
+			type: "tool_use",
+			id: "1",
+			name: "read_file",
+			input: { path: "src/file.ts" },
+		})
+		const result = parseAssistantMessageV2(json, true)
+		expect(result).toHaveLength(1)
+		const toolUse = result[0] as ToolUse
+		expect(toolUse.name).toBe("read_file")
+		expect(toolUse.params.path).toBe("src/file.ts")
+	})
+})
