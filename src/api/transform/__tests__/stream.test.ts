@@ -110,5 +110,19 @@ describe("API Stream Types", () => {
 			expect(multilineChunk.text).toBe("Line 1\nLine 2\nLine 3")
 			expect(multilineChunk.text.split("\n")).toHaveLength(3)
 		})
+
+		it("should handle tool_use chunks", () => {
+			const toolUseChunk: ApiStreamChunk = {
+				type: "tool_use",
+				name: "read_file",
+				params: { path: "src/file.ts" },
+				partial: true,
+			}
+
+			expect(toolUseChunk.type).toBe("tool_use")
+			expect(toolUseChunk.name).toBe("read_file")
+			expect(toolUseChunk.params.path).toBe("src/file.ts")
+			expect(toolUseChunk.partial).toBe(true)
+		})
 	})
 })

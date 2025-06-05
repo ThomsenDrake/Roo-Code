@@ -1302,6 +1302,17 @@ export class Task extends EventEmitter<ClineEvents> {
 							presentAssistantMessage(this)
 							break
 						}
+						case "tool_use": {
+							this.assistantMessageContent.push({
+								type: "tool_use",
+								name: chunk.name as ToolName,
+								params: chunk.params,
+								partial: chunk.partial,
+							})
+
+							presentAssistantMessage(this)
+							break
+						}
 					}
 
 					if (this.abort) {
@@ -1419,7 +1430,7 @@ export class Task extends EventEmitter<ClineEvents> {
 			// able to save the assistant's response.
 			let didEndLoop = false
 
-			if (assistantMessage.length > 0) {
+			if (assistantMessage.length > 0 || this.assistantMessageContent.length > 0) {
 				await this.addToApiConversationHistory({
 					role: "assistant",
 					content: [{ type: "text", text: assistantMessage }],

@@ -895,5 +895,39 @@ describe("Cline", () => {
 			const callArgs = readFileSpy.mock.calls[0][1] as { params: { path: string } }
 			expect(callArgs.params.path).toBe("src/file.ts")
 		})
+
+		it("handles streaming tool_use chunks", async () => {
+			const presentSpy = jest
+				.spyOn(require("../../assistant-message"), "presentAssistantMessage")
+				.mockResolvedValue(undefined)
+
+			const [cline, task] = Task.create({
+				provider: mockProvider,
+				apiConfiguration: mockApiConfig,
+				task: "test task",
+			})
+			cline.abandoned = true
+			await task
+
+			const mockStream = (async function* () {
+				yield {
+					type: "tool_use",
+					name: "read_file",
+					params: { path: "src/file.ts" },
+					partial: false,
+				} as ApiStreamChunk
+			})()
+
+			jest.spyOn(cline.api, "createMessage").mockReturnValue(mockStream)
+
+			await cline.recursivelyMakeClineRequests([{ type: "text", text: "test" }])
+
+			expect(cline.assistantMessageContent).toHaveLength(1)
+			const block = cline.assistantMessageContent[0]
+			expect(block.type).toBe("tool_use")
+			expect(block.partial).toBe(false)
+
+			expect(presentSpy).toHaveBeenCalled()
+		})
 	})
 })
