@@ -83,11 +83,15 @@ export const Ollama = ({ apiConfiguration, setApiConfigurationField }: OllamaPro
 				{t("settings:providers.ollama.description")}
 				<span className="text-vscode-errorForeground ml-1">{t("settings:providers.ollama.warning")}</span>
 			</div>
-			<Checkbox
-				checked={apiConfiguration?.useNativeToolCalls ?? false}
-				onChange={handleInputChange("useNativeToolCalls", noTransform)}>
-				{t("settings:providers.useNativeToolCalls")}
-			</Checkbox>
+			{apiConfiguration?.apiProvider !== "openai" &&
+				apiConfiguration?.apiProvider !== "anthropic" &&
+				!apiConfiguration?.openAiUseAzure && (
+					<Checkbox
+						checked={apiConfiguration?.useNativeToolCalls ?? false}
+						onChange={handleInputChange("useNativeToolCalls", noTransform)}>
+						{t("settings:providers.useNativeToolCalls")}
+					</Checkbox>
+				)}
 		</>
 	)
 }

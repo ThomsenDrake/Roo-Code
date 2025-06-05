@@ -82,11 +82,15 @@ export const VSCodeLM = ({ apiConfiguration, setApiConfigurationField }: VSCodeL
 					</div>
 				)}
 			</div>
-			<Checkbox
-				checked={apiConfiguration?.useNativeToolCalls ?? false}
-				onChange={handleInputChange("useNativeToolCalls", noTransform)}>
-				{t("settings:providers.useNativeToolCalls")}
-			</Checkbox>
+			{apiConfiguration?.apiProvider !== "openai" &&
+				apiConfiguration?.apiProvider !== "anthropic" &&
+				!apiConfiguration?.openAiUseAzure && (
+					<Checkbox
+						checked={apiConfiguration?.useNativeToolCalls ?? false}
+						onChange={handleInputChange("useNativeToolCalls", noTransform)}>
+						{t("settings:providers.useNativeToolCalls")}
+					</Checkbox>
+				)}
 			<div className="text-sm text-vscode-errorForeground">{t("settings:providers.vscodeLmWarning")}</div>
 		</>
 	)
