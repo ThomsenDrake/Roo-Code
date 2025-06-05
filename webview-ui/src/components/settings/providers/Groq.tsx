@@ -46,11 +46,15 @@ export const Groq = ({ apiConfiguration, setApiConfigurationField }: GroqProps) 
 					{t("settings:providers.getGroqApiKey")}
 				</VSCodeButtonLink>
 			)}
-			<Checkbox
-				checked={apiConfiguration?.useNativeToolCalls ?? false}
-				onChange={handleInputChange("useNativeToolCalls", noTransform)}>
-				{t("settings:providers.useNativeToolCalls")}
-			</Checkbox>
+			{apiConfiguration?.apiProvider !== "openai" &&
+				apiConfiguration?.apiProvider !== "anthropic" &&
+				!apiConfiguration?.openAiUseAzure && (
+					<Checkbox
+						checked={apiConfiguration?.useNativeToolCalls ?? false}
+						onChange={handleInputChange("useNativeToolCalls", noTransform)}>
+						{t("settings:providers.useNativeToolCalls")}
+					</Checkbox>
+				)}
 		</>
 	)
 }

@@ -896,18 +896,10 @@ describe("Cline", () => {
 			expect(callArgs.params.path).toBe("src/file.ts")
 		})
 
-		it("executes multiple tool handlers from JSON tool_calls", async () => {
-			const { parseAssistantMessageV2 } = require("../../assistant-message/parseAssistantMessageV2")
-			const readFileModule = require("../../tools/readFileTool")
-			const execCommandModule = require("../../tools/executeCommandTool")
-			const readFileSpy = jest.spyOn(readFileModule, "readFileTool").mockResolvedValue(undefined)
-			const execSpy = jest.spyOn(execCommandModule, "executeCommandTool").mockResolvedValue(undefined)
-			jest.spyOn(require("../../assistant-message"), "parseAssistantMessage").mockImplementation(
-				(...args: unknown[]) => {
-					const msg = args[0] as string
-					return parseAssistantMessageV2(msg, true)
-				},
-			)
+		it("handles streaming tool_use chunks", async () => {
+			const presentSpy = jest
+				.spyOn(require("../../assistant-message"), "presentAssistantMessage")
+				.mockResolvedValue(undefined)
 
 			const [cline, task] = Task.create({
 				provider: mockProvider,
@@ -917,35 +909,25 @@ describe("Cline", () => {
 			cline.abandoned = true
 			await task
 
-			const json = JSON.stringify({
-				tool_calls: [
-					{
-						id: "1",
-						function: {
-							name: "read_file",
-							arguments: JSON.stringify({ path: "src/file.ts" }),
-						},
-					},
-					{
-						id: "2",
-						function: {
-							name: "execute_command",
-							arguments: JSON.stringify({ command: "ls" }),
-						},
-					},
-				],
-			})
-
 			const mockStream = (async function* () {
-				yield { type: "text", text: json } as ApiStreamChunk
+				yield {
+					type: "tool_use",
+					name: "read_file",
+					params: { path: "src/file.ts" },
+					partial: false,
+				} as ApiStreamChunk
 			})()
+
 			jest.spyOn(cline.api, "createMessage").mockReturnValue(mockStream)
 
 			await cline.recursivelyMakeClineRequests([{ type: "text", text: "test" }])
 
-			expect(readFileSpy).toHaveBeenCalled()
-			// Only the first tool call should execute
-			expect(execSpy).not.toHaveBeenCalled()
+			expect(cline.assistantMessageContent).toHaveLength(1)
+			const block = cline.assistantMessageContent[0]
+			expect(block.type).toBe("tool_use")
+			expect(block.partial).toBe(false)
+
+			expect(presentSpy).toHaveBeenCalled()
 		})
 	})
 })

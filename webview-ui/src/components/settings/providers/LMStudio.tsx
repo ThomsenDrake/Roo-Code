@@ -133,11 +133,15 @@ export const LMStudio = ({ apiConfiguration, setApiConfigurationField }: LMStudi
 					)}
 				</>
 			)}
-			<Checkbox
-				checked={apiConfiguration?.useNativeToolCalls ?? false}
-				onChange={handleInputChange("useNativeToolCalls", noTransform)}>
-				{t("settings:providers.useNativeToolCalls")}
-			</Checkbox>
+			{apiConfiguration?.apiProvider !== "openai" &&
+				apiConfiguration?.apiProvider !== "anthropic" &&
+				!apiConfiguration?.openAiUseAzure && (
+					<Checkbox
+						checked={apiConfiguration?.useNativeToolCalls ?? false}
+						onChange={handleInputChange("useNativeToolCalls", noTransform)}>
+						{t("settings:providers.useNativeToolCalls")}
+					</Checkbox>
+				)}
 			<div className="text-sm text-vscode-descriptionForeground">
 				<Trans
 					i18nKey="settings:providers.lmStudio.description"
