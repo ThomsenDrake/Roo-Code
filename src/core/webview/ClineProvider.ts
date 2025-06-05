@@ -834,6 +834,13 @@ export class ClineProvider
 		activate: boolean = true,
 	): Promise<string | undefined> {
 		try {
+			if (
+				providerSettings.useNativeToolCalls === undefined &&
+				(["openai", "openai-native", "anthropic"].includes(providerSettings.apiProvider || "") ||
+					providerSettings.openAiUseAzure === true)
+			) {
+				providerSettings.useNativeToolCalls = true
+			}
 			// TODO: Do we need to be calling `activateProfile`? It's not
 			// clear to me what the source of truth should be; in some cases
 			// we rely on the `ContextProxy`'s data store and in other cases
@@ -1528,7 +1535,10 @@ export class ClineProvider
 			maxOpenTabsContext: stateValues.maxOpenTabsContext ?? 20,
 			maxWorkspaceFiles: stateValues.maxWorkspaceFiles ?? 200,
 			openRouterUseMiddleOutTransform: stateValues.openRouterUseMiddleOutTransform ?? true,
-			useNativeToolCalls: stateValues.useNativeToolCalls ?? false,
+			useNativeToolCalls:
+				stateValues.useNativeToolCalls ??
+				(["openai", "openai-native", "anthropic"].includes(providerSettings.apiProvider || "") ||
+					providerSettings.openAiUseAzure === true),
 			browserToolEnabled: stateValues.browserToolEnabled ?? true,
 			telemetrySetting: stateValues.telemetrySetting || "unset",
 			showRooIgnoredFiles: stateValues.showRooIgnoredFiles ?? true,
