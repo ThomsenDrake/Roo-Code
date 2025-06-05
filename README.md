@@ -99,6 +99,10 @@ MCP extends Roo Code's capabilities by allowing you to add unlimited custom tool
 
 Roo Code automatically uses JSON function calls for tool execution when the underlying model supports them, falling back to XML tags otherwise. You can force the XML format by setting `roo-cline.toolUseFormat` to `xml`. See [issue #4047](https://github.com/RooCodeInc/Roo-Code/issues/4047) for background.
 
+### Native Tool Calls
+
+OpenAI (including Azure OpenAI) and Anthropic models always rely on native tool calling. For other providers, native tool calls can be toggled in the settings UI. Open **Settings** (`Ctrl+,` or `Cmd+,` on macOS), search for your provider, and check or uncheck the **Enable native tool calls** box as needed.
+
 ### Customization
 
 Make Roo Code work your way with:
