@@ -69,11 +69,15 @@ export const Glama = ({
 				serviceUrl="https://glama.ai/models"
 				organizationAllowList={organizationAllowList}
 			/>
-			<Checkbox
-				checked={apiConfiguration?.useNativeToolCalls ?? false}
-				onChange={handleInputChange("useNativeToolCalls", noTransform)}>
-				{t("settings:providers.useNativeToolCalls")}
-			</Checkbox>
+			{apiConfiguration?.apiProvider !== "openai" &&
+				apiConfiguration?.apiProvider !== "anthropic" &&
+				!apiConfiguration?.openAiUseAzure && (
+					<Checkbox
+						checked={apiConfiguration?.useNativeToolCalls ?? false}
+						onChange={handleInputChange("useNativeToolCalls", noTransform)}>
+						{t("settings:providers.useNativeToolCalls")}
+					</Checkbox>
+				)}
 		</>
 	)
 }
