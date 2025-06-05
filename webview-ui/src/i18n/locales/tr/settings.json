@@ -144,6 +144,7 @@
 		"useCustomBaseUrl": "Özel temel URL kullan",
 		"useReasoning": "Akıl yürütmeyi etkinleştir",
 		"useHostHeader": "Özel Host başlığı kullan",
+		"useNativeToolCalls": "Yerel araç çağrılarını etkinleştir",
 		"useLegacyFormat": "Eski OpenAI API formatını kullan",
 		"customHeaders": "Özel Başlıklar",
 		"headerName": "Başlık adı",

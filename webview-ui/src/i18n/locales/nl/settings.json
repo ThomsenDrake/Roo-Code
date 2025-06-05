@@ -144,6 +144,7 @@
 		"useCustomBaseUrl": "Aangepaste basis-URL gebruiken",
 		"useReasoning": "Redenering inschakelen",
 		"useHostHeader": "Aangepaste Host-header gebruiken",
+		"useNativeToolCalls": "Native tool calls inschakelen",
 		"useLegacyFormat": "Verouderd OpenAI API-formaat gebruiken",
 		"customHeaders": "Aangepaste headers",
 		"headerName": "Headernaam",
