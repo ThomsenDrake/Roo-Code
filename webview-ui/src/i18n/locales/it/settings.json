@@ -144,6 +144,7 @@
 		"useCustomBaseUrl": "Usa URL base personalizzato",
 		"useReasoning": "Abilita ragionamento",
 		"useHostHeader": "Usa intestazione Host personalizzata",
+		"useNativeToolCalls": "Abilita le chiamate native degli strumenti",
 		"useLegacyFormat": "Usa formato API OpenAI legacy",
 		"customHeaders": "Intestazioni personalizzate",
 		"headerName": "Nome intestazione",

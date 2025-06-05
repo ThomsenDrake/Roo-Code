@@ -144,6 +144,7 @@
 		"useCustomBaseUrl": "カスタムベースURLを使用",
 		"useReasoning": "推論を有効化",
 		"useHostHeader": "カスタムHostヘッダーを使用",
+		"useNativeToolCalls": "ネイティブツール呼び出しを有効化",
 		"useLegacyFormat": "レガシーOpenAI API形式を使用",
 		"customHeaders": "カスタムヘッダー",
 		"headerName": "ヘッダー名",
