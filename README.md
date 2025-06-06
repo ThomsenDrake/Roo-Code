@@ -103,6 +103,22 @@ Roo Code automatically uses JSON function calls for tool execution when the unde
 
 OpenAI's standard endpoint, Azure OpenAI, and Anthropic models always rely on native tool calling. Because it enforces native tool calls, you won't see an **Enable native tool calls** checkbox. For other providers, native tool calls can be toggled in the settings UI.
 
+For all non-default providers, the settings sidebar shows an **Enable native tool calls** checkbox. Toggle this option to allow or prevent Roo Code from using the provider's native tool calling APIs. The screenshot below highlights the checkbox location.
+
+You can also override the UI setting directly in your configuration using `useNativeToolCalls`:
+
+```jsonc
+{
+	"roo-cline.providerSettings": {
+		"lmstudio": {
+			"useNativeToolCalls": true,
+		},
+	},
+}
+```
+
+See the [Native Tool Calls](#native-tool-calls) section for more information.
+
 ### Customization
 
 Make Roo Code work your way with:
