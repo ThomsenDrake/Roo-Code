@@ -174,6 +174,47 @@ describe("AnthropicHandler", () => {
 			// Verify API
 			expect(mockCreate).toHaveBeenCalled()
 		})
+
+		it("should emit tool_use chunks when native tool calls are enabled", async () => {
+			handler = new AnthropicHandler({ ...mockOptions, useNativeToolCalls: true })
+
+			const toolSpec = { name: "calculator", description: "calc", input_schema: {} }
+
+			mockCreate.mockImplementationOnce(async () => ({
+				async *[Symbol.asyncIterator]() {
+					yield {
+						type: "content_block_start",
+						index: 0,
+						content_block: { type: "tool_use", name: toolSpec.name, input: { a: 1 } },
+					}
+					yield { type: "message_stop" }
+				},
+			}))
+
+			const stream = handler.createMessage(
+				systemPrompt,
+				[{ role: "user", content: [{ type: "text" as const, text: "calc" }] }],
+				undefined,
+				[toolSpec],
+			)
+
+			const chunks: any[] = []
+			for await (const chunk of stream) {
+				chunks.push(chunk)
+			}
+
+			const toolChunk = chunks.find((c) => c.type === "tool_use")
+			expect(toolChunk).toEqual({
+				type: "tool_use",
+				name: toolSpec.name,
+				params: { a: 1 },
+				partial: false,
+			})
+			expect(mockCreate).toHaveBeenCalledWith(
+				expect.objectContaining({ tools: [toolSpec], tool_choice: { type: "auto" } }),
+				expect.any(Object),
+			)
+		})
 	})
 
 	describe("completePrompt", () => {

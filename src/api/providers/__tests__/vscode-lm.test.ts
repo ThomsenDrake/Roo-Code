@@ -2,6 +2,7 @@ import * as vscode from "vscode"
 import { VsCodeLmHandler } from "../vscode-lm"
 import { ApiHandlerOptions } from "../../../shared/api"
 import { Anthropic } from "@anthropic-ai/sdk"
+import { parseXml } from "../../../utils/xml"
 
 // Mock vscode namespace
 jest.mock("vscode", () => {
@@ -219,6 +220,35 @@ describe("VsCodeLmHandler", () => {
 				type: "text",
 				text: JSON.stringify({ type: "tool_call", ...toolCallData }),
 			})
+		})
+
+		it("should parse XML tool calls when native tool calls are disabled", async () => {
+			const systemPrompt = "You are a helpful assistant"
+			const messages: Anthropic.Messages.MessageParam[] = [{ role: "user" as const, content: "Do math" }]
+
+			const xml = `<tool_call name="calc" id="call-1"><arguments>{\"a\":1}</arguments></tool_call>`
+
+			mockLanguageModelChat.sendRequest.mockResolvedValueOnce({
+				stream: (async function* () {
+					yield new vscode.LanguageModelTextPart(xml)
+					return
+				})(),
+				text: (async function* () {
+					yield xml
+					return
+				})(),
+			})
+
+			const stream = handler.createMessage(systemPrompt, messages)
+			const chunks: any[] = []
+			for await (const chunk of stream) {
+				chunks.push(chunk)
+			}
+
+			expect(chunks).toHaveLength(2)
+			const parsed = parseXml(chunks[0].text) as any
+			expect(parsed.tool_call["@_name"]).toBe("calc")
+			expect(parsed.tool_call.arguments).toBe('{"a":1}')
 		})
 
 		it("should handle native tool calls when enabled", async () => {
