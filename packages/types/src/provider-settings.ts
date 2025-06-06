@@ -202,9 +202,11 @@ const litellmSchema = baseProviderSettingsSchema.extend({
 	litellmModelId: z.string().optional(),
 })
 
-const defaultSchema = z.object({
-	apiProvider: z.undefined(),
-})
+const defaultSchema = baseProviderSettingsSchema.merge(
+	z.object({
+		apiProvider: z.undefined(),
+	}),
+)
 
 export const providerSettingsSchemaDiscriminated = z.discriminatedUnion("apiProvider", [
 	anthropicSchema.merge(z.object({ apiProvider: z.literal("anthropic") })),
