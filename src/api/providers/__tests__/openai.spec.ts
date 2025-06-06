@@ -159,6 +159,58 @@ describe("OpenAiHandler", () => {
 			expect(textChunks[0].text).toBe("Test response")
 		})
 
+		it("should emit tool_use chunks when native tool calls are enabled", async () => {
+			handler = new OpenAiHandler({ ...mockOptions, useNativeToolCalls: true })
+
+			const toolSpec = {
+				name: "calculator",
+				description: "simple calc",
+				parameters: { type: "object", properties: {} },
+			}
+
+			mockCreate.mockResolvedValueOnce(
+				(async function* () {
+					yield {
+						choices: [
+							{
+								delta: {
+									tool_calls: [
+										{
+											id: "1",
+											type: "function",
+											function: { name: toolSpec.name, arguments: '{"a":1}' },
+										},
+									],
+								},
+								index: 0,
+							},
+						],
+						usage: { prompt_tokens: 0, completion_tokens: 0 },
+					}
+					yield {
+						choices: [
+							{
+								delta: {},
+								index: 0,
+							},
+						],
+						usage: { prompt_tokens: 5, completion_tokens: 2 },
+					}
+				})(),
+			)
+
+			const stream = handler.createMessage(systemPrompt, messages, undefined, [toolSpec])
+			const chunks: any[] = []
+			for await (const chunk of stream) {
+				chunks.push(chunk)
+			}
+
+			expect(mockCreate).toHaveBeenCalledWith(
+				expect.objectContaining({ functions: [toolSpec], function_call: "auto" }),
+				expect.any(Object),
+			)
+		})
+
 		it("should include reasoning_effort when reasoning effort is enabled", async () => {
 			const reasoningOptions: ApiHandlerOptions = {
 				...mockOptions,
