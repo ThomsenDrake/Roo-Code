@@ -202,7 +202,13 @@ export function buildToolSchemas(
 
 	const schemas = Array.from(tools).map((toolName) => {
 		const schemaFn = toolSchemaMap[toolName]
-		return schemaFn ? schemaFn(args) : undefined
+		const schema = schemaFn ? schemaFn(args) : undefined
+		return schema
+			? {
+					type: "function" as const,
+					function: schema,
+				}
+			: undefined
 	})
 
 	return schemas.filter(Boolean)
